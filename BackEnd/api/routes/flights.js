@@ -1,6 +1,7 @@
 const express = require('express');
 const { check, validationResult, matchedData } = require('express-validator');
 const { authRequired, adminRequired } = require('../auth')
+const airports = require("../airports")
 
 const router = express.Router();
 const flights = database.collection("flights")
