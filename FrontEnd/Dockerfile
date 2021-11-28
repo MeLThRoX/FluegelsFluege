@@ -2,7 +2,7 @@ FROM node:alpine as builder
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package*.json ./
-RUN npm install --silent
+RUN npm install
 COPY . ./
 ENV NODE_OPTIONS=--openssl-legacy-provider
 RUN npm run build
