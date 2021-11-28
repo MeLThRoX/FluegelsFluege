@@ -73,28 +73,39 @@ router.post('/search', authRequired, [
     check('destination').notEmpty().isAlpha().withMessage('Invalid destination'),
     check('time').optional().isISO8601().withMessage('Invalid time format')
 ], (req, res) => {
-    flights.find(matchedData(req)).toArray((err, v) => {
-        if (err) res.sendStatus(404)
-        else res.send(v)
-    })
+    const valid = validationResult(req)
+    if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
+    else {
+        flights.find(matchedData(req)).toArray((err, v) => {
+            if (err) res.sendStatus(404)
+            else res.send(v)
+        })
+    }
 })
 
 router.post('/book', authRequired, [
-    check('origin').optional().isString().withMessage('Invalid origin'),
-    check('destination').optional().isString().withMessage('Invalid Destination'),
-    check('time').optional().isISO8601().withMessage('Invalid time'),
-    check('seats').optional().isInt().withMessage('Invalid seat number'),
-    check('passengers').optional().isInt().withMessage('Invalid passanger number')
+    check('flight_id').optional().isString().withMessage('Invalid Flight-ID Format'),
+    check('first_name').notEmpty().isAlpha().withMessage('Invalid Firstname Format'),
+    check('last_name').notEmpty().isAlpha().withMessage('Invalid Lastname Format'),
+    check('birthdate').notEmpty().isISO8601().withMessage('Invalid Birthdate Format'),
+    check('citizenship').notEmpty().isAlpha().withMessage('Invalid Citizenship Format'),
+    check('gender').notEmpty().isAlpha().withMessage('Invalid Gender Format'),
+    check('numberPassport').notEmpty().isNumeric().withMessage('Invalid Passport Number Format'),
+    check('datePassport').notEmpty().isISO8601().withMessage('Invalid Passport Date Format')
 ], (req, res) => {
-    users.findOne({ ...req.user, iat: undefined }).then(user => {
-        flights.findOneAndUpdate(matchedData(req), {
-            $push: { passengers: user._id.toString() }
-        }).then(v => {
-            res.sendStatus(200)
+    const valid = validationResult(req)
+    if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
+    else {
+        flights.findOne({ _id: matchedData(req).flight_id }).then(flight => {
+            users.findOneAndUpdate({ ...req.user, iat: undefined }, {
+                $push: { tickets: matchedData(req) }
+            }).then(user => {
+                res.sendStatus(200)
+            })
         }).catch(err => {
             res.sendStatus(500)
         })
-    })
+    }
 })
 
 module.exports = router

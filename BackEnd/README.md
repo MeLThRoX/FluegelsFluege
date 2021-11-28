@@ -4,22 +4,22 @@
 
     + Headers
 
-            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiYWRtaW4iLCJsYXN0X25hbWUiOiJhZG1pbiIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGZmLmNvbSIsImlhdCI6MTYzNzQyMjEyMX0.Ua7SpmTa8OC414rSzHZkj7GVndKYNiC_jjKFBqHMTFY
+            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiSm9obiIsImxhc3RfbmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiSm9obkRvZSIsImVtYWlsIjoiam9obi5kb2VAbWFpbC5jb20iLCJpYXQiOjE2MzgxMTcyNTJ9.SzfZUys22yruW8Oc-M1Zmi8uGvfxbdOtBtRquQSBXOA
 
     + Body
 
             {
-                "username": "admin",
-                "password": "123456"
+                "username": "JohnDoe",
+                "password": "123"
             }
 
 + Response 200 (text/plain; charset=utf-8)
 
     + Headers
 
-            Etag: W/"2-nOO9QiTIwXgNtWtBJezz8kv3SLc"
             X-Powered-By: Express
-            Set-Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiYWRtaW4iLCJsYXN0X25hbWUiOiJhZG1pbiIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGZmLmNvbSIsImlhdCI6MTYzNzQyMjEyMX0.Ua7SpmTa8OC414rSzHZkj7GVndKYNiC_jjKFBqHMTFY; Path=/
+            Set-Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiSm9obiIsImxhc3RfbmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiSm9obkRvZSIsImVtYWlsIjoiam9obi5kb2VAbWFpbC5jb20iLCJpYXQiOjE2MzgxMTcyNTJ9.SzfZUys22yruW8Oc-M1Zmi8uGvfxbdOtBtRquQSBXOA; Path=/
+            Etag: W/"2-nOO9QiTIwXgNtWtBJezz8kv3SLc"
 
     + Body
 
@@ -32,7 +32,7 @@
 
     + Headers
 
-            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiYWRtaW4iLCJsYXN0X25hbWUiOiJhZG1pbiIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGZmLmNvbSIsImlhdCI6MTYzNzQyMjEyMX0.Ua7SpmTa8OC414rSzHZkj7GVndKYNiC_jjKFBqHMTFY
+            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiSm9obiIsImxhc3RfbmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiSm9obkRvZSIsImVtYWlsIjoiam9obi5kb2VAbWFpbC5jb20iLCJpYXQiOjE2MzgxMTcyNTJ9.SzfZUys22yruW8Oc-M1Zmi8uGvfxbdOtBtRquQSBXOA
 
     + Body
 
@@ -50,9 +50,9 @@
 
     + Headers
 
-            Etag: W/"7-rM9AyJuqT6iOan/xHh+AW+7K/T8"
             X-Powered-By: Express
-            Set-Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiSm9obiIsImxhc3RfbmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiamQiLCJlbWFpbCI6ImpvaG4uZG9lQG1haWwuY29tIiwiaWF0IjoxNjM3MzY5MDUwfQ.qmk3WsKEjrorSYBeor81IEBgXLuMQXpo-hkdOkyIfGs; Path=/
+            Set-Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiSm9obiIsImxhc3RfbmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiamQiLCJlbWFpbCI6ImpvaG4uZG9lQG1haWwuY29tIiwiaWF0IjoxNjM4MTA1MzAwfQ.Sc861jNXf7i2rmfOq75J-pqgSOczoGC0WmJCgffzPdA; Path=/
+            Etag: W/"7-rM9AyJuqT6iOan/xHh+AW+7K/T8"
 
     + Body
 
@@ -65,7 +65,7 @@
 
     + Headers
 
-            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiYWRtaW4iLCJsYXN0X25hbWUiOiJhZG1pbiIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGZmLmNvbSIsImlhdCI6MTYzNzQyMjEyMX0.Ua7SpmTa8OC414rSzHZkj7GVndKYNiC_jjKFBqHMTFY
+            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiSm9obiIsImxhc3RfbmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiSm9obkRvZSIsImVtYWlsIjoiam9obi5kb2VAbWFpbC5jb20iLCJpYXQiOjE2MzgxMTcyNTJ9.SzfZUys22yruW8Oc-M1Zmi8uGvfxbdOtBtRquQSBXOA
 
     + Body
 
@@ -99,7 +99,7 @@
 
     + Headers
 
-            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiYWRtaW4iLCJsYXN0X25hbWUiOiJhZG1pbiIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGZmLmNvbSIsImlhdCI6MTYzNzQyMjEyMX0.Ua7SpmTa8OC414rSzHZkj7GVndKYNiC_jjKFBqHMTFY
+            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiSm9obiIsImxhc3RfbmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiSm9obkRvZSIsImVtYWlsIjoiam9obi5kb2VAbWFpbC5jb20iLCJpYXQiOjE2MzgxMTcyNTJ9.SzfZUys22yruW8Oc-M1Zmi8uGvfxbdOtBtRquQSBXOA
 
     + Body
 
@@ -111,12 +111,12 @@
 
     + Headers
 
-            Etag: W/"10d-0Pg3iPJWCiZzv6E5wK/kVgPYk6A"
             X-Powered-By: Express
+            Etag: W/"112-O5I6Jwxr6QKwEu0i5/T75nVEfN4"
 
     + Body
 
-            {"_id":"619844da969111c870b12780","first_name":"John","last_name":"Doe","username":"jd","email":"john.doe@mail.com","phone":"+4917655455200","credit_card":"4647 8270 5514 1433","password":"8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92","admin":false}
+            {"_id":"61a380d4b36d61c5c62e6d2b","first_name":"John","last_name":"Doe","username":"JohnDoe","email":"john.doe@mail.com","phone":"+4917655455200","credit_card":"4647 8270 5514 1433","password":"a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3","admin":false}
 
 
 # POST /api/user/update
@@ -125,7 +125,7 @@
 
     + Headers
 
-            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiYWRtaW4iLCJsYXN0X25hbWUiOiJhZG1pbiIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGZmLmNvbSIsImlhdCI6MTYzNzQyMjEyMX0.Ua7SpmTa8OC414rSzHZkj7GVndKYNiC_jjKFBqHMTFY
+            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiSm9obiIsImxhc3RfbmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiSm9obkRvZSIsImVtYWlsIjoiam9obi5kb2VAbWFpbC5jb20iLCJpYXQiOjE2MzgxMTcyNTJ9.SzfZUys22yruW8Oc-M1Zmi8uGvfxbdOtBtRquQSBXOA
 
     + Body
 
@@ -156,7 +156,7 @@
 
     + Headers
 
-            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiYWRtaW4iLCJsYXN0X25hbWUiOiJhZG1pbiIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGZmLmNvbSIsImlhdCI6MTYzNzQyMjEyMX0.Ua7SpmTa8OC414rSzHZkj7GVndKYNiC_jjKFBqHMTFY
+            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiSm9obiIsImxhc3RfbmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiSm9obkRvZSIsImVtYWlsIjoiam9obi5kb2VAbWFpbC5jb20iLCJpYXQiOjE2MzgxMTcyNTJ9.SzfZUys22yruW8Oc-M1Zmi8uGvfxbdOtBtRquQSBXOA
 
     + Body
 
@@ -176,13 +176,83 @@
             OK
 
 
+# POST /api/user/isadmin
+
++ Request
+
+    + Headers
+
+            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiSm9obiIsImxhc3RfbmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiSm9obkRvZSIsImVtYWlsIjoiam9obi5kb2VAbWFpbC5jb20iLCJpYXQiOjE2MzgxMTcyNTJ9.SzfZUys22yruW8Oc-M1Zmi8uGvfxbdOtBtRquQSBXOA
+
+
+
++ Response 200 (application/json; charset=utf-8)
+
+    + Headers
+
+            X-Powered-By: Express
+            Etag: W/"4-X/5TO4MPCKAyY0ipFgr6/IraRNs"
+
+    + Body
+
+            true
+
+
+# GET /api/user
+
++ Request
+
+    + Headers
+
+            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiSm9obiIsImxhc3RfbmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiSm9obkRvZSIsImVtYWlsIjoiam9obi5kb2VAbWFpbC5jb20iLCJpYXQiOjE2MzgxMTcyNTJ9.SzfZUys22yruW8Oc-M1Zmi8uGvfxbdOtBtRquQSBXOA
+
+
+
++ Response 200 (application/json; charset=utf-8)
+
+    + Headers
+
+            X-Powered-By: Express
+            Etag: W/"198-rbtN1ZzbDlDTbms3PgQgQnR7bhU"
+
+    + Body
+
+            {"_id":"61a380d4b36d61c5c62e6d2b","first_name":"John","last_name":"Doe","username":"JohnDoe","email":"john.doe@mail.com","phone":"+4917655455200","credit_card":"4647 8270 5514 1433","tickets":[{"flight_id":"61a3ad5f22b6ef6ccfa7f315","first_name":"Jake","last_name":"Tran","birthdate":"1994-05-07T00:00:00Z","citizenship":"DE","gender":"m","numberPassport":"479487794","datePassport":"2011-01-01T00:00:00Z"}]}
+
+
+# PATCH /api/user
+
++ Request (application/json; charset=utf-8)
+
+    + Headers
+
+            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiSm9obiIsImxhc3RfbmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiSm9obkRvZSIsImVtYWlsIjoiam9obi5kb2VAbWFpbC5jb20iLCJpYXQiOjE2MzgxMTcyNTJ9.SzfZUys22yruW8Oc-M1Zmi8uGvfxbdOtBtRquQSBXOA
+
+    + Body
+
+            {
+                "username": "JohnDoe"
+            }
+
++ Response 200 (text/plain; charset=utf-8)
+
+    + Headers
+
+            X-Powered-By: Express
+            Etag: W/"2-nOO9QiTIwXgNtWtBJezz8kv3SLc"
+
+    + Body
+
+            OK
+
+
 # POST /api/flights/create
 
 + Request (application/json; charset=utf-8)
 
     + Headers
 
-            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiYWRtaW4iLCJsYXN0X25hbWUiOiJhZG1pbiIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGZmLmNvbSIsImlhdCI6MTYzNzQyMjEyMX0.Ua7SpmTa8OC414rSzHZkj7GVndKYNiC_jjKFBqHMTFY
+            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiSm9obiIsImxhc3RfbmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiSm9obkRvZSIsImVtYWlsIjoiam9obi5kb2VAbWFpbC5jb20iLCJpYXQiOjE2MzgxMTcyNTJ9.SzfZUys22yruW8Oc-M1Zmi8uGvfxbdOtBtRquQSBXOA
 
     + Body
 
@@ -197,8 +267,8 @@
 
     + Headers
 
-            Etag: W/"7-rM9AyJuqT6iOan/xHh+AW+7K/T8"
             X-Powered-By: Express
+            Etag: W/"7-rM9AyJuqT6iOan/xHh+AW+7K/T8"
 
     + Body
 
@@ -211,7 +281,7 @@
 
     + Headers
 
-            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiYWRtaW4iLCJsYXN0X25hbWUiOiJhZG1pbiIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGZmLmNvbSIsImlhdCI6MTYzNzQyMjEyMX0.Ua7SpmTa8OC414rSzHZkj7GVndKYNiC_jjKFBqHMTFY
+            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiSm9obiIsImxhc3RfbmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiSm9obkRvZSIsImVtYWlsIjoiam9obi5kb2VAbWFpbC5jb20iLCJpYXQiOjE2MzgxMTcyNTJ9.SzfZUys22yruW8Oc-M1Zmi8uGvfxbdOtBtRquQSBXOA
 
     + Body
 
@@ -223,12 +293,12 @@
 
     + Headers
 
-            Etag: W/"b6-yuhnlbJV79YYa8tJnfI+6uwpPdM"
             X-Powered-By: Express
+            Etag: W/"81-r8w9gv2b3CE/3nU1Knf8NPb2DFU"
 
     + Body
 
-            {"_id":"61984c41ad02e84474e177ab","origin":"IST","destination":"FRA","time":"2021-11-19T08:00:00Z","seats":"100","passengers":["619844da969111c870b12780","619844da969111c870b12780"]}
+            {"_id":"61a3ad5f22b6ef6ccfa7f315","origin":"IST","destination":"FRA","time":"2021-11-19T08:00:00Z","seats":"100","passengers":[]}
 
 
 # POST /api/flights/update
@@ -237,7 +307,7 @@
 
     + Headers
 
-            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiYWRtaW4iLCJsYXN0X25hbWUiOiJhZG1pbiIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGZmLmNvbSIsImlhdCI6MTYzNzQyMjEyMX0.Ua7SpmTa8OC414rSzHZkj7GVndKYNiC_jjKFBqHMTFY
+            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiSm9obiIsImxhc3RfbmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiSm9obkRvZSIsImVtYWlsIjoiam9obi5kb2VAbWFpbC5jb20iLCJpYXQiOjE2MzgxMTcyNTJ9.SzfZUys22yruW8Oc-M1Zmi8uGvfxbdOtBtRquQSBXOA
 
     + Body
 
@@ -271,7 +341,7 @@
 
     + Headers
 
-            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiYWRtaW4iLCJsYXN0X25hbWUiOiJhZG1pbiIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGZmLmNvbSIsImlhdCI6MTYzNzQyMjEyMX0.Ua7SpmTa8OC414rSzHZkj7GVndKYNiC_jjKFBqHMTFY
+            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiSm9obiIsImxhc3RfbmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiSm9obkRvZSIsImVtYWlsIjoiam9obi5kb2VAbWFpbC5jb20iLCJpYXQiOjE2MzgxMTcyNTJ9.SzfZUys22yruW8Oc-M1Zmi8uGvfxbdOtBtRquQSBXOA
 
     + Body
 
@@ -297,7 +367,7 @@
 
     + Headers
 
-            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiYWRtaW4iLCJsYXN0X25hbWUiOiJhZG1pbiIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGZmLmNvbSIsImlhdCI6MTYzNzQyMjEyMX0.Ua7SpmTa8OC414rSzHZkj7GVndKYNiC_jjKFBqHMTFY
+            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiSm9obiIsImxhc3RfbmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiSm9obkRvZSIsImVtYWlsIjoiam9obi5kb2VAbWFpbC5jb20iLCJpYXQiOjE2MzgxMTcyNTJ9.SzfZUys22yruW8Oc-M1Zmi8uGvfxbdOtBtRquQSBXOA
 
     + Body
 
@@ -310,12 +380,12 @@
 
     + Headers
 
-            Etag: W/"83-9yTMw+/iM1GXS/Hg01KtB6l1TBk"
             X-Powered-By: Express
+            Etag: W/"83-VowraWa8uTiG30/chUcVQC7Y6sM"
 
     + Body
 
-            [{"_id":"6199109bc6af312134f3dea4","origin":"IST","destination":"FRA","time":"2021-11-19T08:00:00Z","seats":"100","passengers":[]}]
+            [{"_id":"61a3ad5f22b6ef6ccfa7f315","origin":"IST","destination":"FRA","time":"2021-11-19T08:00:00Z","seats":"100","passengers":[]}]
 
 
 # POST /api/flights/book
@@ -324,23 +394,56 @@
 
     + Headers
 
-            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiYWRtaW4iLCJsYXN0X25hbWUiOiJhZG1pbiIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGZmLmNvbSIsImlhdCI6MTYzNzQyMjEyMX0.Ua7SpmTa8OC414rSzHZkj7GVndKYNiC_jjKFBqHMTFY
+            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiSm9obiIsImxhc3RfbmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiSm9obkRvZSIsImVtYWlsIjoiam9obi5kb2VAbWFpbC5jb20iLCJpYXQiOjE2MzgxMTcyNTJ9.SzfZUys22yruW8Oc-M1Zmi8uGvfxbdOtBtRquQSBXOA
 
     + Body
 
             {
-                "origin": "IST"
+                "flight_id": "61a3ad5f22b6ef6ccfa7f315",
+                "first_name": "Jake",
+                "last_name": "Tran",
+                "birthdate": "1994-05-07T00:00:00Z",
+                "citizenship": "DE",
+                "gender": "m",
+                "numberPassport": "479487794",
+                "datePassport": "2011-01-01T00:00:00Z"
             }
 
 + Response 200 (text/plain; charset=utf-8)
 
     + Headers
 
-            Etag: W/"2-nOO9QiTIwXgNtWtBJezz8kv3SLc"
             X-Powered-By: Express
+            Etag: W/"2-nOO9QiTIwXgNtWtBJezz8kv3SLc"
 
     + Body
 
             OK
+
+
+# POST /api/airports/search
+
++ Request (application/json; charset=utf-8)
+
+    + Headers
+
+            Cookie: jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdF9uYW1lIjoiSm9obiIsImxhc3RfbmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiSm9obkRvZSIsImVtYWlsIjoiam9obi5kb2VAbWFpbC5jb20iLCJpYXQiOjE2MzgxMTcyNTJ9.SzfZUys22yruW8Oc-M1Zmi8uGvfxbdOtBtRquQSBXOA
+
+    + Body
+
+            {
+                "iata": "FRA"
+            }
+
++ Response 200 (application/json; charset=utf-8)
+
+    + Headers
+
+            Etag: W/"d2-Zg3ucQlrB+lVtAg/LxY/dlQMDlM"
+            X-Powered-By: Express
+
+    + Body
+
+            {"icao":"EDDF","iata":"FRA","name":"Frankfurt am Main International Airport","city":"Frankfurt-am-Main","state":"Hesse","country":"DE","elevation":364,"lat":50.0264015198,"lon":8.543129921,"tz":"Europe/Berlin"}
 
 

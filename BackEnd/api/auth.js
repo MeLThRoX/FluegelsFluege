@@ -14,7 +14,7 @@ router.post('/login', [
     if (!valid.isEmpty()) res.status(400).send("Format error")
     else {
         let { username, password } = req.body
-        password = crypto.createHash('sha256').update(password).digest('hex')
+        password = createPasswordHash(password)
 
         users.findOne({ $or: [{ username }, { email: username }], password }).then(value => {
             if (!value) res.status(400).send("Unable to login")
@@ -50,6 +50,11 @@ router.post('/register', [
     }
 })
 
+// TODO use salt and another algorithm
+function createPasswordHash(password) {
+    return crypto.createHash('sha256').update(password).digest('hex')
+}
+
 function authRequired(req, res, next) {
     const token = req.cookies.jwt
 
@@ -82,4 +87,4 @@ function adminRequired(req, res, next) {
     })
 }
 
-module.exports = { router, authRequired, adminRequired }
+module.exports = { router, authRequired, adminRequired, createPasswordHash }
