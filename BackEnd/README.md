@@ -257,8 +257,8 @@
     + Body
 
             {
-                "origin": "IST",
-                "destination": "FRA",
+                "orig": "IST",
+                "dest": "FRA",
                 "time": "2021-11-19T08:00:00Z",
                 "seats": "100"
             }
@@ -286,7 +286,7 @@
     + Body
 
             {
-                "origin": "IST"
+                "orig": "IST"
             }
 
 + Response 200 (application/json; charset=utf-8)
@@ -294,11 +294,11 @@
     + Headers
 
             X-Powered-By: Express
-            Etag: W/"81-r8w9gv2b3CE/3nU1Knf8NPb2DFU"
+            Etag: W/"78-Bbc0e7EMY7OJ+2DI1S3pQjy02eg"
 
     + Body
 
-            {"_id":"61a3ad5f22b6ef6ccfa7f315","origin":"IST","destination":"FRA","time":"2021-11-19T08:00:00Z","seats":"100","passengers":[]}
+            {"_id":"61a515696d4fe44c220840a6","orig":"IST","dest":"FRA","time":"2021-11-19T08:00:00Z","seats":"100","passengers":[]}
 
 
 # POST /api/flights/update
@@ -313,10 +313,8 @@
 
             {
                 "find": {
-                    "origin": "IST",
-                    "destination": "FRA",
-                    "time": "10.03.2021 14:30",
-                    "seats": "100"
+                    "orig": "IST",
+                    "dest": "FRA"
                 },
                 "update": {
                     "time": "10.03.2021 15.00"
@@ -327,8 +325,8 @@
 
     + Headers
 
-            Etag: W/"2-nOO9QiTIwXgNtWtBJezz8kv3SLc"
             X-Powered-By: Express
+            Etag: W/"2-nOO9QiTIwXgNtWtBJezz8kv3SLc"
 
     + Body
 
@@ -346,15 +344,15 @@
     + Body
 
             {
-                "origin": "IST"
+                "orig": "IST"
             }
 
 + Response 200 (text/plain; charset=utf-8)
 
     + Headers
 
-            Etag: W/"2-nOO9QiTIwXgNtWtBJezz8kv3SLc"
             X-Powered-By: Express
+            Etag: W/"2-nOO9QiTIwXgNtWtBJezz8kv3SLc"
 
     + Body
 
@@ -372,8 +370,8 @@
     + Body
 
             {
-                "origin": "IST",
-                "destination": "FRA"
+                "orig": "IST",
+                "dest": "FRA"
             }
 
 + Response 200 (application/json; charset=utf-8)
@@ -381,11 +379,11 @@
     + Headers
 
             X-Powered-By: Express
-            Etag: W/"83-VowraWa8uTiG30/chUcVQC7Y6sM"
+            Etag: W/"7a-rFMitppoE6WI1v8RlDhTaFbrFeg"
 
     + Body
 
-            [{"_id":"61a3ad5f22b6ef6ccfa7f315","origin":"IST","destination":"FRA","time":"2021-11-19T08:00:00Z","seats":"100","passengers":[]}]
+            [{"_id":"61a515696d4fe44c220840a6","orig":"IST","dest":"FRA","time":"2021-11-19T08:00:00Z","seats":"100","passengers":[]}]
 
 
 # POST /api/flights/book
