@@ -70,19 +70,19 @@ class FlightOverview extends Component {
   }
 
   async handleSubmit() {
-    /*
+
     const selectedData = {
       "origin": this.state.origin,
       "destination": this.state.destination
      
     }
     // "time": format(this.state.time,"yyyy-M-d'T'hh:mm:ss'Z'")
-*/
+
     const seletedData =  {
       "origin": "IST",
       "destination": "FRA"
     }
-    
+
     const response = await fetch('/api/flights/search', {
       method: 'POST',
       headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
