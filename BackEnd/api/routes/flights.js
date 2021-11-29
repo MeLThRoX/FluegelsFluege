@@ -8,8 +8,8 @@ const flights = database.collection("flights")
 const users = database.collection("users")
 
 router.post('/create', authRequired, adminRequired, [
-    check('origin').notEmpty().isString().withMessage('Invalid origin'),
-    check('destination').notEmpty().isString().withMessage('Invalid Destination'),
+    check('orig').notEmpty().isString().withMessage('Invalid origin'),
+    check('dest').notEmpty().isString().withMessage('Invalid Destination'),
     check('time').notEmpty().isISO8601().withMessage('Invalid time'),
     check('seats').notEmpty().isInt().withMessage('Invalid seat number')
 ], (req, res) => {
@@ -26,8 +26,8 @@ router.post('/create', authRequired, adminRequired, [
 })
 
 router.post('/read', authRequired, [
-    check('origin').optional().isString().withMessage('Invalid origin'),
-    check('destination').optional().isString().withMessage('Invalid Destination'),
+    check('orig').optional().isString().withMessage('Invalid origin'),
+    check('dest').optional().isString().withMessage('Invalid Destination'),
     check('time').optional().isISO8601().withMessage('Invalid time'),
     check('seats').optional().isInt().withMessage('Invalid seat number'),
     check('passengers').optional().isInt().withMessage('Invalid passanger number')
@@ -54,8 +54,8 @@ router.post('/update', authRequired, adminRequired, (req, res) => {
 })
 
 router.post('/delete', authRequired, adminRequired, [
-    check('origin').optional().isString().withMessage('Invalid origin'),
-    check('destination').optional().isString().withMessage('Invalid Destination'),
+    check('orig').optional().isString().withMessage('Invalid origin'),
+    check('dest').optional().isString().withMessage('Invalid Destination'),
     check('time').optional().isISO8601().withMessage('Invalid time'),
     check('seats').optional().isInt().withMessage('Invalid seat number'),
     check('passengers').optional().isInt().withMessage('Invalid passanger number')
@@ -69,8 +69,8 @@ router.post('/delete', authRequired, adminRequired, [
 })
 
 router.post('/search', authRequired, [
-    check('origin').notEmpty().isAlpha().withMessage('Invalid origin'),
-    check('destination').notEmpty().isAlpha().withMessage('Invalid destination'),
+    check('orig').notEmpty().isAlpha().withMessage('Invalid origin'),
+    check('dest').notEmpty().isAlpha().withMessage('Invalid destination'),
     check('time').optional().isISO8601().withMessage('Invalid time format')
 ], (req, res) => {
     const valid = validationResult(req)
