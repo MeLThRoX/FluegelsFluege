@@ -36,6 +36,7 @@ class SettingsUser extends Component {
 
     async updateUserdata() {
 
+        /*
         // TODO
         const response = await fetch('/api/user/read', {
             method: 'POST',
@@ -46,7 +47,7 @@ class SettingsUser extends Component {
         const data = await response.text();
 
         alert(data);
-
+*/
     }
 
     render() { 
