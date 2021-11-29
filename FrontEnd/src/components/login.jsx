@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { View, Text } from "react-view";
 import Recaptcha from 'react-recaptcha';
 
 import startScreen from './startScreen';
@@ -46,21 +45,19 @@ class Login extends Component {
       "password": this.state.password
     }
 
-    if (this.state.isLoggedIn == false) {
-      /*const response = await fetch('http://localhost:5050/api/login', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
-      body: JSON.stringify(toSubmit)
-      })
+    const response = await fetch('/api/login', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
+    body: JSON.stringify(toSubmit)
+    })
 
-      const data = await response.json()
-  */
-      //alert(JSON.stringify(this.props));
-      this.props.setState(event, startScreen);
-      event.preventDefault();
+    if (response.ok) {
+      alert("Erfolgreich eingeloggt!")
+      this.props.setPage("", startScreen)
     } else {
-      alert("Sie sind bereits eingeloggt!")
+      alert("Error: " + response.status)
     }
+    
     
   }
 
@@ -68,7 +65,7 @@ class Login extends Component {
     return ( 
       <div className="wrapper">
         <h1>Login</h1>
-          <div style={{width: '100%',height: '30%',}}>
+          <div>
             
             <input style={{marginLeft: '20%',width: '60%'}} type="text" placeholder="Username" onChange={this.setUserName}/>   
             <input style={{marginLeft: '20%',width: '60%'}} type="password" placeholder="Passwort" onChange={this.setPassword}/>
@@ -88,54 +85,3 @@ class Login extends Component {
 }
  
 export default Login;
-
-async function loginUser(credentials) {
-  return fetch('http://localhost:5050/api/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json', 'charset':'utf-8'
-    },
-    body: credentials
-  })
-    .then(data => data.json())
-}
-
-function setToken(userToken){
-  sessionStorage.setItem('token', JSON.stringify(userToken));
-}
-
-function getToken() {
-  const tokenString = sessionStorage.getItem('token');
-  const userToken = JSON.parse(tokenString);
-  return userToken?.token
-}
-
-
-/*
-export default function Login({ setToken }) {
-  const [username, setUserName] = useState();
-  const [password, setPassword] = useState();
-  return(
-    <div className="login-wrapper">
-      <h1>Please Log In</h1>
-      <form>
-        <div>
-          <p>Username</p>
-          <input type="text" onChange={e => setUserName(e.target.value)}/>
-        </div>
-        <div>
-          <p>Password</p>
-          <input type="password" onChange={e => setPassword(e.target.value)}/>
-        </div>
-        <div>
-          <button type="submit">Submit</button>
-        </div>
-      </form>
-    </div>
-  )
-}
-
-Login.propTypes = {
-    setToken: PropTypes.func.isRequired
-  }
-  */

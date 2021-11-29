@@ -3,9 +3,6 @@ import React, { Component } from 'react';
 import BasicTableNoSelectFlight from './basicTableNoSelectFlight';
 import BasicTableNoSelectUser from './basicTableNoSelectUser';
 
-import Data_User from './test-data-user.json'
-import Data_Flight from './test-data.json'
-
 class SettingsAdmin extends Component {
     constructor(props) {
         super(props);
@@ -31,14 +28,15 @@ class SettingsAdmin extends Component {
             userData: [],
             flightData: [],
 
-            foundUserID: ""
-         }
+            foundUserID: "",
+        }
 
          this.handleChange = this.handleChange.bind(this);
     }
 
     handleChange(e) {
         this.setState({...this.state, [e.target.name]: e.target.value})
+        this.setState({pageToRender: BasicTableNoSelectUser})
     }
 
     async createNewFlight(e) {
@@ -50,22 +48,17 @@ class SettingsAdmin extends Component {
             "seats": this.state.inputCreateSeats
         }
 
-        const response = await fetch('http://localhost:5050/api/flights/create', {
+        const response = await fetch('/api/flights/create', {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
         body: JSON.stringify(newFlightData)
         })
     
-        const data = await response.json()
-    
-        if (data == "Create") {
+        if (response.ok) {
             alert("Flight created!")
         } else {
-            alert("Flight could not be created!")
+            alert("Error-Code: " + response.status)
         }
-
-        alert(JSON.stringify(newFlightData))
-    
     }
 
     async updateFlight(e) {
@@ -82,22 +75,18 @@ class SettingsAdmin extends Component {
             }
         }
 
-        
-        const response = await fetch('http://localhost:5050/api/flights/create', {
+        const response = await fetch('/api/flights/create', {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
         body: JSON.stringify(editFlightDate)
         })
     
-        const data = await response.json()
-    
-        if (data == "OK") {
+        if (response.ok) {
             alert("Flight updated!")
         } else {
-            alert("Flight could not be updated!")
+            alert("Error Code: " + response.status)
         }
         
-        alert(JSON.stringify(editFlightDate));
     }
     
     async deleteFlight(event) {
@@ -106,23 +95,18 @@ class SettingsAdmin extends Component {
             "_id": this.state.inputDeleteID
         }
 
-        const response = await fetch('http://localhost:5050/api/flights/delete', {
+        const response = await fetch('/api/flights/delete', {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
         body: JSON.stringify(toDelete)
         })
-    
-        const data = await response.json()
-    
-        if (data == "OK") {
+ 
+        if (response.ok) {
             alert("Flight deleted!")
         } else {
-            alert("Flight could not be deleted!")
+            alert("Error-Code: " + response.status)
         }
-
         
-        alert(JSON.stringify(toDelete));
-
     }
     
     async getIdByName(event) {
@@ -132,24 +116,29 @@ class SettingsAdmin extends Component {
             "last_name": this.state.inputSearchNameLast
         }
         
-        const response = await fetch('http://localhost:5050/api/user/read', {
+        const response = await fetch('/api/user/read', {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
         body: JSON.stringify(toSearch)
         })
     
         const data = await response.json()
+        
+        this.setState({userData: [{
+            _id: data._id, 
+            first_name: data.first_name,
+            last_name: data.last_name
+        }]});
 
-        this.setState({userData: data});
     }
-    
+
     async createOverview(event) {
     
         const toSearch = {
             "passengers": [this.state.inputSearchFlightUID]
         }
 
-        const response = await fetch('http://localhost:5050/api/flights/search', {
+        const response = await fetch('/api/flights/search', {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
         body: JSON.stringify(toSearch)
@@ -157,8 +146,8 @@ class SettingsAdmin extends Component {
     
         const data = await response.json()
          
-        this.setState({flightData: data})
-
+        //TODO
+        this.setState({flightData: [data]})
         }
 
     render() { 
@@ -210,7 +199,7 @@ class SettingsAdmin extends Component {
             </div>
             <div style={{border: "3px solid green", textAlign:'center'}}>
                 Flug bearbeiten
-                <div>
+                <div style={{margin: 10}}>
                     <input 
                         style={{marginLeft: '20%',width: '60%'}} 
                         type="text" 
@@ -220,6 +209,10 @@ class SettingsAdmin extends Component {
                         onChange={this.handleChange}
                     />
                 </div> 
+                <p>
+                    Neue Daten
+                </p> 
+                (Felder leer lassen, wenn diese nicht geändert werden sollen)
                 <div>
                     <input 
                         style={{marginLeft: '20%',width: '60%'}} 
@@ -260,7 +253,7 @@ class SettingsAdmin extends Component {
                         onChange={this.handleChange}
                     />
                 </div> 
-                <button onClick={(event) => this.updateFlight(event)}> Neuen Flug erstellen </button>
+                <button onClick={(event) => this.updateFlight(event)}> Flug updaten </button>
             </div>
             <div style={{border: "3px solid green", textAlign:'center'}}>
                 Flug löschen 
@@ -299,7 +292,8 @@ class SettingsAdmin extends Component {
                     />
                 </div> 
                 <button onClick={ (event) => this.getIdByName(event)}> User ID finden </button> 
-                <BasicTableNoSelectUser data={Data_User}/>
+                <BasicTableNoSelectUser data={this.state.userData}/>
+                
             </div>
             <div style={{border: "3px solid green", textAlign:'center'}}>
                 Übersicht zu Flügen pro User (input user-id). Falls keine ID eingeben wird, werden alle Flüge ausgegeben.
@@ -314,7 +308,7 @@ class SettingsAdmin extends Component {
                     />
                 </div>
                 <button onClick={ (event) => this.createOverview(event)}> Flüge anzeigen </button>
-                <BasicTableNoSelectFlight data={Data_Flight}/>  
+                <BasicTableNoSelectFlight data={this.state.flightData}/>  
             </div>
         </div> );
     }

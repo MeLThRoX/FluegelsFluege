@@ -15,46 +15,59 @@ class CreateUser extends Component {
             password_check: "",
             phone: "",
             credit_card: "",
-            isVerified: false
+            isVerified: false,
+            checked: false
          }
          this.handleChange = this.handleChange.bind(this);
          this.verifiyCaptcha = this.verifiyCaptcha.bind(this);
          this.captchaLoaded = this.captchaLoaded.bind(this);
          this.startRegister = this.startRegister.bind(this);
+         this.handleCheckbox = this.handleCheckbox.bind(this);
     }
 
     async startRegister() {
         if (this.state.isVerified) {
-            if (this.state.password === this.state.password_check) {
-                const toSubmit = {
-                "first_name": this.state.first_name,
-                "last_name": this.state.last_name,
-                "username": this.state.username,
-                "email": this.state.email,
-                "password": this.state.password,
-                "phone": this.state.phone,
-                "credit_card": this.state.credit_card
-                }
-                /*
-                const response = await fetch('http://localhost:5050/api/login', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
-                body: JSON.stringify(toSubmit)
-                })
-                const data = await response.json()
+            if (this.state.checked) {
+                if (this.state.password === this.state.password_check) {
+                    const toSubmit = {
+                    "first_name": this.state.first_name,
+                    "last_name": this.state.last_name,
+                    "username": this.state.username,
+                    "email": this.state.email,
+                    "password": this.state.password,
+                    "phone": this.state.phone,
+                    "credit_card": this.state.credit_card
+                    }
+                    
+                    const resp = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
+                    body: JSON.stringify(toSubmit)
+                    })
+                    
+                    if( resp.ok ){
+                        alert("Benutzer wurde erstellt")
+                    } else {
+                        alert("Error: " + resp.status)
+                    }
 
-                alert(data);
-                */
+                } else {
+                    alert("Ihre Passwörter stimmen nicht überein!")
+                }
             } else {
-                alert("Ihre Passwörter stimmen nicht überein!")
+                alert("Bitte AGB aktzeptieren!")
             }
-        } else {
+        }else {
             alert("Bitte Captcha durchführen!")
         }
     }
 
     verifiyCaptcha() {
         this.setState({isVerified: true})
+    }
+
+    handleCheckbox() {
+        this.setState({checked: !this.state.checked});
     }
 
     captchaLoaded() {
@@ -142,26 +155,15 @@ class CreateUser extends Component {
                     />        
                 </div>      
             </form>
-            <div>
-                <div>
-              Name: {this.state.first_name} {this.state.last_name}
-                </div>     
-                <div>
-              Username: {this.state.username}
-                </div>     
-                <div>
-              Email: {this.state.email}
-                </div>     
-                <div>
-              Telefon: {this.state.phone}
-                </div>     
-                <div>
-              Kreditkarte: {this.state.credit_card}
-                </div>     
-                <div>
-              Passwort: {this.state.password}   
-                </div>     
-            </div> 
+            
+            <label>
+                {"Ich habe die AGB gelesen und aktzeptiert  "}
+                <input
+                type="checkbox"
+                checked={this.state.checked}
+                onChange={() => this.handleCheckbox()}
+                />
+            </label>
 
             <Recaptcha
                 sitekey="6LeTBkkdAAAAADLu8NW6AZXaGF2CfhXMxgviRX0U"

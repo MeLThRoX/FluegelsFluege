@@ -1,8 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
+
+import './Wrapper.css'
 
 class startScreen extends React.Component {
     render() { 
-        return <div className="start">
+        return <div className="wrapper">
             <h4>Wie können wir Ihnen behilflich sein?</h4>
         </div>;
     }

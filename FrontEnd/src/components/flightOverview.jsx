@@ -7,7 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./Wrapper.css"
 import './table.css'
 
-import MOCKDATA from './test-data.json'
+import MODCKDATA from './test-data.json'
 import BasicTableSelectFlight from "./basicTableSelectFlight";
 
 import BookingOverview from "./flightBooking";
@@ -58,7 +58,7 @@ class FlightOverview extends Component {
   
   handleChangeStartDate(date) {
     this.setState({time: date})
-    {/*this.setState({timeToSubmit: format(date, "yyyy-M-d'T'hh:mm:ss'Z'") });*/}
+    /*this.setState({timeToSubmit: format(date, "yyyy-M-d'T'hh:mm:ss'Z'") });*/
   }
 
   async handleBooking(e, newID) {
@@ -70,33 +70,39 @@ class FlightOverview extends Component {
   }
 
   async handleSubmit() {
+    /*
     const selectedData = {
       "origin": this.state.origin,
-      "destination": this.state.destination,
-      "time": format(this.state.time,"yyyy-M-d'T'hh:mm:ss'Z'")
+      "destination": this.state.destination
+     
+    }
+    // "time": format(this.state.time,"yyyy-M-d'T'hh:mm:ss'Z'")
+*/
+    const seletedData =  {
+      "origin": "IST",
+      "destination": "FRA"
     }
     
-    const response = await fetch('http://localhost:5050/api/flights/search', {
+    const response = await fetch('/api/flights/search', {
       method: 'POST',
       headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
-      body: JSON.stringify(selectedData)
+      body: JSON.stringify(seletedData)
     })
 
     const data = await response.json()
 
     if (response.ok) {
-      this.setState({flights: data})
+      this.setState({flights: [data]})
     } else {
-      alert("Bei der Suche ist ein Fehler aufgetreten!")
+      alert("Error: " + response.status)
     }
-
   }
 
   componentDidMount() {
     this.setState({ 
       countries: [
-        {id: 'AFG', name: 'Afghanistan'},
-        {id: 'ALA', name: 'Åland Islands'},
+        {id: 'IST', name: 'IST'},
+        {id: 'FRA', name: 'FRA'},
         {id: 'ALB', name: 'Albania'}
       ],
       numbers: [ 
@@ -133,7 +139,7 @@ class FlightOverview extends Component {
 
     return (
       <div style={{textAlign: "center"}}>
-        <form onSubmit={this.handleSubmit} >
+        <div>
           <div>
             Wo wollen Sie starten:
             <select value={this.state.origin} onChange={this.handleChangeStart}>
@@ -172,16 +178,17 @@ class FlightOverview extends Component {
             />
 
           </div>
-        <input type="submit" value="Nach Flug suchen" />
+        </div>
+        
         <div>
           <p>Ausgewählter Start: {this.state.origin}</p>
           <p>Ausgewähltes Ziel: {this.state.destination}</p>
           <p>Anzahl Passagiere: {this.state.anzahlReisende}</p>
           <p>Ausgewähltes Datum: {format(this.state.time, "yyyy-M-d'T'hh:mm:ss'Z'")}</p>
         </div>
-      </form>
-      <div>
-        <BasicTableSelectFlight data={MOCKDATA} setFlightID={this.handleBooking}/>
+      <button onClick={() => this.handleSubmit()}>Nach Flug suchen</button> 
+      <div style={{margin: 15}}>
+        <BasicTableSelectFlight data={MODCKDATA} setFlightID={this.handleBooking}/>
       </div>
     </div>
     );

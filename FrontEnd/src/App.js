@@ -1,5 +1,4 @@
-import { Fragment } from "react";
-import React, { Component, useState } from 'react';
+import React, { Fragment } from 'react';
 
 import BasicScreen from './components/startScreen';
 import LoginScreen from './components/login';
@@ -7,10 +6,10 @@ import FlightOverview from "./components/flightOverview";
 import CreateUser from "./components/CreateUser";
 import SettingsAdmin from "./components/SettingsAdmin";
 import SettingsUser from "./components/SettingsUser";
-import BookingOverview from "./components/flightBooking";
+import AGB from "./components/agb";
+import Impressum from "./components/impressum";
 
 import './App.css'
-import { th } from "date-fns/locale";
 
 class App extends React.Component {
 
@@ -18,7 +17,6 @@ class App extends React.Component {
     super(props);
     this.state = {
       primePage: BasicScreen,
-      isAdmin: true,
       flighIdtToBook: "",
       countPassengers: 1
     };
@@ -28,6 +26,7 @@ class App extends React.Component {
     this.handleSettings = this.handleSettings.bind(this);
     this.setFlightID = this.setFlightID.bind(this);
     this.setPassengerCount = this.setPassengerCount.bind(this);
+    this.handleLogin = this.handleLogin.bind(this);
   }
 
   handleChange(date) {
@@ -44,8 +43,16 @@ class App extends React.Component {
     this.setState({countPassengers: newCount})
   }
 
-  handleSettings(e) {
-    if (this.state.isAdmin) {
+  async handleSettings(e) {
+
+    const resp = await fetch('/api/user/isadmin', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'charset':'utf-8'}
+    })
+
+    const data = await resp.text();
+
+    if ( data === "true") {
       this.setState({ primePage: SettingsAdmin })
     } else {
       this.setState({ primePage: SettingsUser })
@@ -56,10 +63,18 @@ class App extends React.Component {
     this.setState({ primePage: toOpen})
   }
 
-  componentDidMount() {
+  async handleLogin() {
 
-    //prüfen ob user eingeloggt/admin ist und dann state setzen
+    let resp = await fetch('/api/user', {
+      method: 'GET',
+      headers: {'Content-Type': 'application/json', 'charset':'utf-8'}
+    })
 
+    if(resp.status === 401) {
+      this.setState({primePage: LoginScreen})
+    } else if (resp.status === 200){
+      alert("Error: " + resp.status + "\n Sie sind evtl. schon eingeloggt.")
+    }
   }
 
   render() { 
@@ -71,9 +86,12 @@ class App extends React.Component {
       </div>
 
       <section className="app-section container">
-
-        <Content clickHandler = {this.onButtonClicked} clickHandlerSettings = {this.handleSettings}/>
-        <div className="chosen-Page">
+        <Content 
+          clickHandler = {this.onButtonClicked} 
+          clickHandlerSettings = {this.handleSettings}
+          clickHandlerLogin = {this.handleLogin}
+        />
+        <div className="chosen-Page" style={{margin: 15}}>
           {React.createElement(
             this.state.primePage, {
               setPage: this.onButtonClicked, 
@@ -93,38 +111,29 @@ class App extends React.Component {
 class Content extends React.Component {
   render() { 
     return (
-      <div class='row' >
-        <div class="center">
-          <button onClick = {(e) => this.props.clickHandler(e, LoginScreen)}>Zum Login</button>
+      <>
+        <div class={"center"} style={{flex: 1, flexDirection: 'column'}}>
+          <button onClick = {() => this.props.clickHandlerLogin()}>Zum Login</button>
         </div>
-        <div class="center">
+        <div class={"center"}>
           <button onClick = {(e) => this.props.clickHandler(e, CreateUser)}>Benutzer Erstellen</button>
         </div>
-        <div class="center">
-          <button onClick = {(e) => this.props.clickHandlerSettings(e)}>Einstellungen/Verwaltung</button>
+        <div class={"center"}>
+          <button onClick = {() => this.props.clickHandlerSettings()}>Einstellungen/Verwaltung</button>
         </div>
-        <div class="center">
+        <div class={"center"}>
           <button onClick = {(e) => this.props.clickHandler(e, FlightOverview)}>Zu den Flügen</button>
         </div>
-      </div>
+        <div style={{margin:10}}></div>
+        <div class={"center"}>
+          <button onClick = {(e) => this.props.clickHandler(e, AGB)}>AGB</button>
+        </div>
+        <div class={"center"}>
+          <button onClick = {(e) => this.props.clickHandler(e, Impressum)}>Impressum</button>
+        </div>
+      </>
     );
   }
 }
  
 export default App;
-
-/*
-
-
-
-function App() {
-  return()
-    <div className="App">
-      <p>Hello, world from the Front-End!</p>
-    </div>
-  )
-}
-
-export default App;
-
-*/

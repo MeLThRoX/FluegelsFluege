@@ -1,8 +1,8 @@
-import React, { useMemo} from 'react';
+import React from 'react';
 
 export default function BasicTableSelectFlight(props) {
 
-    const data = useMemo(() => props.data, []);
+    const data = props.data;
 
     return (
         <table className="table table-hover table-bordered">

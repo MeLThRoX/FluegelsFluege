@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import DatePicker from 'react-datepicker';
 import "./Wrapper.css"
+import startScreen from './startScreen';
 
 class BookingOverview extends Component {
     constructor(props) {
@@ -20,6 +22,7 @@ class BookingOverview extends Component {
          this.pushToConst = this.pushToConst.bind(this);
          this.addState = this.addState.bind(this);
          this.submitBooking = this.submitBooking.bind(this);
+         this.handleBirthdate = this.handleBirthdate.bind(this);
     }
 
     async submitBooking() {
@@ -41,6 +44,7 @@ class BookingOverview extends Component {
             }
             */
            alert("Buchung wird durchgeführt")
+           this.props.setPage("", startScreen);
         }
     }
 
@@ -53,7 +57,7 @@ class BookingOverview extends Component {
                 "id": this.state.passengersPushed,
                 "first_name": this.state.first_name,
                 "last_name": this.state.last_name,
-                "birthdate": this.state.birthdate,
+                "birthdate": this.state.birthdate + "T00:00:00Z",
                 "citizenship": this.state.citizenship,
                 "gender": this.state.gender,
                 "numberPassport": this.state.numberPassport,
@@ -66,7 +70,17 @@ class BookingOverview extends Component {
             this.setState(prevState => {
                 return {passengersPushed: prevState.passengersPushed + 1}
                 });
+        } else {
+            alert("Sie haben bereits alle benötigten Daten eingegeben! Führen Sie nun die Buchung durch.")
         }
+    }
+
+    handleBirthdate(date) {
+        this.setState({birthdate: date});
+    }
+    
+    handledatePassport(date) {
+        this.setState({datePassport: date});
     }
 
     onChange(e) {
@@ -83,7 +97,12 @@ class BookingOverview extends Component {
         return(
         <div className="wrapper">
             <div>
-                Daten für Passergier Nr.: {this.state.passengersPushed + 1} eingeben.
+                <p>
+                    Geben Sie hier alle nötigen Informationen über alle Passagiere (inclusive des eingeloggten Users) ein.
+                    <br/>
+                    Daten für Passergier Nr. {this.state.passengersPushed + 1} eingeben:
+                </p>
+                
             </div>
             <div>
                 <input
@@ -104,13 +123,12 @@ class BookingOverview extends Component {
                 />        
             </div>
             <div>                   
-                <input            
-                    type="text"            
-                    name="birthdate"           
-                    value={this.state.birthdate}            
-                    onChange={this.onChange} 
-                    placeholder="birthdate"         
-                />        
+                <DatePicker
+                    selected={this.state.birthdate}
+                    onChange={(date) => this.handleBirthdate(date)}
+                    dateFormat="yyyy-M-dd"
+                    placeholderText="Select a birthdate"
+                />       
             </div>     
             <div>                
                 <input            
@@ -140,13 +158,12 @@ class BookingOverview extends Component {
                 />        
             </div>     
             <div>               
-                <input            
-                    type="text"            
-                    name="datePassport"           
-                    value={this.state.datePassport}            
-                    onChange={this.onChange}  
-                    placeholder="datePassport"        
-                />        
+                <DatePicker
+                    selected={this.state.datePassport}
+                    onChange={(date) => this.handledatePassport(date)}
+                    dateFormat="yyyy-M-dd"
+                    placeholderText="Expirationdate of passport"
+                />         
             </div>
             <button onClick={this.pushToConst}>Personenbezogene Daten für Passagier hinterlegen</button>
             <button onClick={this.submitBooking}>Buchung durchführen</button>

@@ -18,6 +18,8 @@ class SettingsUser extends Component {
             new_credit_card: "",
             booked_flights: []
         }
+
+        this.updateUserdata= this.updateUserdata.bind(this);
     }
 
     async getCurrentFlights() {
@@ -29,6 +31,21 @@ class SettingsUser extends Component {
     componentDidMount() {
 
         //<getCurrentFlights />
+
+    }
+
+    async updateUserdata() {
+
+        // TODO
+        const response = await fetch('/api/user/read', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
+            body: JSON.stringify(toSearch)
+        })
+
+        const data = await response.text();
+
+        alert(data);
 
     }
 
@@ -106,10 +123,11 @@ class SettingsUser extends Component {
                     onChange={this.handleChange}        
                     placeholder="Kreditkartennummer"  
                 />        
-            </div>       
-            Übersicht zu gebuchten Flügen
-            <div>
-               
+            </div>  
+            <button onClick={() => this.updateUserdata()}>Daten updaten</button>     
+            
+            <div style={{margin: 15}}>
+                Übersicht zu gebuchten Flügen:
                 <BasicTableNoSelectFlight data={this.state.booked_flights}/>
             </div>
         </div> 
