@@ -6,14 +6,14 @@ services:
     restart: always
     ports:
       - "8080:80"
+    environment:
+      - ADMIN_PASSWORD=123456
     depends_on:
       - frontend
 
   frontend:
     build: ./FrontEnd
     restart: always
-    # ports:
-    #   - 8080:80
     depends_on:
       - backend
   
@@ -28,8 +28,6 @@ services:
   database:
     image: mongo
     restart: always
-    ports:
-      - 27017:27017
     # environment:
     #   MONGO_INITDB_ROOT_USERNAME: root
     #   MONGO_INITDB_ROOT_PASSWORD: root
