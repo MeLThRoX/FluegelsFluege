@@ -25,18 +25,17 @@ router.post('/create', authRequired, adminRequired, [
     }
 })
 
-router.post('/read', authRequired, [
+router.post('/read', authRequired, adminRequired, [
+    check('_id').optional().isMongoId().withMessage('Invalid ID Format'),
     check('orig').optional().isString().withMessage('Invalid origin'),
     check('dest').optional().isString().withMessage('Invalid Destination'),
     check('time').optional().isISO8601().toDate().withMessage('Invalid time'),
-    check('seats').optional().isInt().withMessage('Invalid seat number'),
-    check('passengers').optional().isInt().withMessage('Invalid passanger number')
+    check('seats').optional().isInt().withMessage('Invalid seat number')
 ], (req, res) => {
     const valid = validationResult(req)
     if (!valid.isEmpty()) {
         res.status(400).send(valid.errors[0].msg)
     } else {
-        console.log(flights)
         flights.findOne(matchedData(req)).then(v => {
             if (v) res.send(v)
             else res.sendStatus(404)
@@ -54,11 +53,11 @@ router.post('/update', authRequired, adminRequired, (req, res) => {
 })
 
 router.post('/delete', authRequired, adminRequired, [
-    check('orig').optional().isString().withMessage('Invalid origin'),
-    check('dest').optional().isString().withMessage('Invalid Destination'),
-    check('time').optional().isISO8601().toDate().withMessage('Invalid time'),
-    check('seats').optional().isInt().withMessage('Invalid seat number'),
-    check('passengers').optional().isInt().withMessage('Invalid passanger number')
+    check('_id').optional().isMongoId().withMessage('Invalid ID Format'),
+    check('orig').optional().isString().withMessage('Invalid Origin Format'),
+    check('dest').optional().isString().withMessage('Invalid Destination Format'),
+    check('time').optional().isISO8601().toDate().withMessage('Invalid Time Format'),
+    check('seats').optional().isInt().withMessage('Invalid Seat Number Format')
 ], (req, res) => {
     flights.findOneAndDelete(matchedData(req)).then(v => {
         if (!v) res.sendStatus(404)
@@ -86,20 +85,21 @@ router.post('/search', authRequired, [
 
 router.post('/book', authRequired, [
     check('flight_id').optional().isString().withMessage('Invalid Flight-ID Format'),
-    check('first_name').notEmpty().isAlpha().withMessage('Invalid Firstname Format'),
-    check('last_name').notEmpty().isAlpha().withMessage('Invalid Lastname Format'),
-    check('birthdate').notEmpty().isISO8601().toDate().withMessage('Invalid Birthdate Format'),
-    check('citizenship').notEmpty().isAlpha().withMessage('Invalid Citizenship Format'),
-    check('gender').notEmpty().isAlpha().withMessage('Invalid Gender Format'),
-    check('numberPassport').notEmpty().isNumeric().withMessage('Invalid Passport Number Format'),
-    check('datePassport').notEmpty().isISO8601().toDate().withMessage('Invalid Passport Date Format')
+    check('passengers.*.first_name').notEmpty().isAlpha().withMessage('Invalid Firstname Format'),
+    check('passengers.*.last_name').notEmpty().isAlpha().withMessage('Invalid Lastname Format'),
+    check('passengers.*.birthdate').notEmpty().isISO8601().toDate().withMessage('Invalid Birthdate Format'),
+    check('passengers.*.citizenship').notEmpty().isAlpha().withMessage('Invalid Citizenship Format'),
+    check('passengers.*.gender').notEmpty().isAlpha().withMessage('Invalid Gender Format'),
+    check('passengers.*.numberPassport').notEmpty().isNumeric().withMessage('Invalid Passport Number Format'),
+    check('passengers.*.datePassport').notEmpty().isISO8601().toDate().withMessage('Invalid Passport Date Format')
 ], (req, res) => {
+    console.log(matchedData(req))
     const valid = validationResult(req)
     if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
     else {
         flights.findOne({ _id: matchedData(req).flight_id }).then(flight => {
             users.findOneAndUpdate({ ...req.user, iat: undefined }, {
-                $push: { tickets: matchedData(req) }
+                $push: { tickets: { $each: matchedData(req).passengers.map(passanger => ({...passanger, flight_id: matchedData(req).flight_id})) } }
             }).then(user => {
                 res.sendStatus(200)
             })
@@ -107,6 +107,12 @@ router.post('/book', authRequired, [
             res.sendStatus(500)
         })
     }
+})
+
+router.post('/passengers', authRequired, adminRequired, [
+    check('flight_id').optional().isString().withMessage('Invalid Flight-ID Format'),
+], (req, res) => {
+
 })
 
 module.exports = router
