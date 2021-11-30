@@ -15,7 +15,7 @@ class Impressum extends Component {
                     Name und Anschrift:
                 </p>
                 <p>
-                    FluegelsFluege
+                    FluegelsFluege GmbH
                     <br/>
                     Beispielstraße 14
                     <br/>

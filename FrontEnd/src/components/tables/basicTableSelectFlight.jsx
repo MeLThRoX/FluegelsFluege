@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function BasicTableNoSelectUser(props) {
+export default function BasicTableSelectFlight(props) {
 
     const data = props.data;
 
@@ -8,20 +8,23 @@ export default function BasicTableNoSelectUser(props) {
         <table className="table table-hover table-bordered">
             <thead>
                 <tr>
+                    <th scope="col"><center>Buchen</center></th>
                     <th scope="col"><center>ID</center></th>
-                    <th scope="col">Vorname</th>
-                    <th scope="col">Nachname</th>
+                    <th scope="col">Origin</th>
+                    <th scope="col">Destination</th>
+                    <th scope="col">Time</th>
                 </tr>
             </thead>
             <tbody id="cursorPointer">
-                {/*Rendering data*/}
                 {data.map(function(item, key) {
                     return (
                         <>
                         <tr key = {key}>
+                            <td><center><button onClick={(e) => props.setFlightID(e, item._id)}> Buchen </button></center></td>
                             <td><center>{item._id}</center></td>
-                            <td>{item.first_name}</td>
-                            <td>{item.last_name}</td>
+                            <td>{item.origin}</td>
+                            <td>{item.destination}</td>
+                            <td>{item.time}</td>
                         </tr>
                         </>
                     )

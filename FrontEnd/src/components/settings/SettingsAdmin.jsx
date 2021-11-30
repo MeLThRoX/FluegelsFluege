@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
+import BasicTableNoSelectFlight from '../tables/basicTableNoSelectFlight';
+import BasicTableNoSelectUser from '../tables/basicTableNoSelectUser';
 
-import BasicTableNoSelectFlight from './basicTableNoSelectFlight';
-import BasicTableNoSelectUser from './basicTableNoSelectUser';
 
 class SettingsAdmin extends Component {
     constructor(props) {
@@ -32,14 +32,29 @@ class SettingsAdmin extends Component {
         }
 
          this.handleChange = this.handleChange.bind(this);
+         this.createNewFlight = this.createNewFlight.bind(this);
+         this.updateFlight = this.updateFlight.bind(this);
+         this.deleteFlight = this.deleteFlight.bind(this);
+         this.createOverview = this.createOverview.bind(this);
+         this.getIdByName = this.getIdByName.bind(this);
+
     }
 
+    /*
+    Primäre-Handle Funktion für User-Input. 
+    Wird von Eingabefeldern direkt in State gespeichert.
+    */
     handleChange(e) {
         this.setState({...this.state, [e.target.name]: e.target.value})
-        this.setState({pageToRender: BasicTableNoSelectUser})
+        //this.setState({pageToRender: BasicTableNoSelectUser})
     }
 
-    async createNewFlight(e) {
+    /*
+    Funktion zum Erstellen eines neuen Fluges in der Datenbank.
+    Anhand von zuvor getätigten Usereingaben wird request an die API gestellt.
+    Eingabevalidierung auf Seiten des Backend.
+    */
+    async createNewFlight() {
 
         const newFlightData={
             "origin": this.state.inputCreateOrigin,
@@ -53,15 +68,22 @@ class SettingsAdmin extends Component {
         headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
         body: JSON.stringify(newFlightData)
         })
+
+        let data = await response.text()
     
-        if (response.ok) {
+        if (data === "Created") {
             alert("Flight created!")
         } else {
             alert("Error-Code: " + response.status)
         }
     }
 
-    async updateFlight(e) {
+    /*
+    Funktion zum Ändern von Flug bezogenen Daten in der Datenbank.
+    Anhand von zuvor getätigten Usereingaben wird request an die API gestellt.
+    Eingabevalidierung auf Seiten des Backend.
+    */
+    async updateFlight() {
 
         const editFlightDate={
             "find": {
@@ -75,21 +97,28 @@ class SettingsAdmin extends Component {
             }
         }
 
-        const response = await fetch('/api/flights/create', {
+        const response = await fetch('/api/flights/update', {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
         body: JSON.stringify(editFlightDate)
         })
+
+        let data = await response.text()
     
-        if (response.ok) {
+        if (data === "OK") {
             alert("Flight updated!")
         } else {
             alert("Error Code: " + response.status)
         }
         
     }
-    
-    async deleteFlight(event) {
+
+    /*
+    Funktion zum Löschen eines Fluges aus der Datenbank.
+    Anhand von zuvor getätigten Usereingaben wird request an die API gestellt.
+    Eingabevalidierung auf Seiten des Backend.
+    */
+    async deleteFlight() {
         
         const toDelete = {
             "_id": this.state.inputDeleteID
@@ -100,16 +129,23 @@ class SettingsAdmin extends Component {
         headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
         body: JSON.stringify(toDelete)
         })
- 
-        if (response.ok) {
+
+        let data = await response.text()
+    
+        if (data === "OK") {
             alert("Flight deleted!")
         } else {
             alert("Error-Code: " + response.status)
         }
         
     }
-    
-    async getIdByName(event) {
+
+    /*
+    Erfassen von UserDaten anhand einer Eingabe des Admin.
+    Eingabevalidierung auf Seiten des Backend.
+    Nach erhalten der Response werden Daten in State gespeichert. Von dort aus in Tabelle dargestellt.
+    */
+    async getIdByName() {
 
         const toSearch ={
             "first_name": this.state.inputSearchNameFirst,
@@ -132,13 +168,19 @@ class SettingsAdmin extends Component {
 
     }
 
-    async createOverview(event) {
+    /*
+    Erstellen der Übersicht, welche Flüge bisher von einem Nutzer gebucht wurden.
+    Anhand einer User ID wird Anfrage an Backend gestellt.
+    Daten von Response werden in State gespeichert und dann in Tabelle dargestellt.
+    Eingabevalidierung auf Seiten des Backend.
+    */
+    async createOverview() {
     
         const toSearch = {
-            "passengers": [this.state.inputSearchFlightUID]
+            "_id": [this.state.inputSearchFlightUID]
         }
 
-        const response = await fetch('/api/flights/search', {
+        const response = await fetch('/api/user/read', {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
         body: JSON.stringify(toSearch)
@@ -146,9 +188,9 @@ class SettingsAdmin extends Component {
     
         const data = await response.json()
          
-        //TODO
-        this.setState({flightData: [data]})
-        }
+        //TODO - request gibt keine flight id zurück
+        alert(JSON.stringify(data))
+    }
 
     render() { 
         return ( 
@@ -195,7 +237,7 @@ class SettingsAdmin extends Component {
                         onChange={this.handleChange}
                     />
                 </div> 
-                <button onClick={ (event) => this.createNewFlight(event)}> Neuen Flug erstellen </button>
+                <button onClick={() => this.createNewFlight()}> Neuen Flug erstellen </button>
             </div>
             <div style={{border: "3px solid green", textAlign:'center'}}>
                 Flug bearbeiten
@@ -253,7 +295,7 @@ class SettingsAdmin extends Component {
                         onChange={this.handleChange}
                     />
                 </div> 
-                <button onClick={(event) => this.updateFlight(event)}> Flug updaten </button>
+                <button onClick={() => this.updateFlight()}> Flug updaten </button>
             </div>
             <div style={{border: "3px solid green", textAlign:'center'}}>
                 Flug löschen 
@@ -267,7 +309,7 @@ class SettingsAdmin extends Component {
                         onChange={this.handleChange}
                     />
                 </div> 
-                <button onClick={ (event) => this.deleteFlight(event)}> Flug mit angegebener ID löschen </button> 
+                <button onClick={ () => this.deleteFlight()}> Flug mit angegebener ID löschen </button> 
             </div>
             <div style={{border: "3px solid green", textAlign:'center'}}>
                 Infos über User per Vorname und Nachname. Gibt ID zurück
@@ -291,7 +333,7 @@ class SettingsAdmin extends Component {
                         onChange={this.handleChange}
                     />
                 </div> 
-                <button onClick={ (event) => this.getIdByName(event)}> User ID finden </button> 
+                <button onClick={ () => this.getIdByName()}> User ID finden </button> 
                 <BasicTableNoSelectUser data={this.state.userData}/>
                 
             </div>
@@ -307,7 +349,7 @@ class SettingsAdmin extends Component {
                         onChange={this.handleChange}
                     />
                 </div>
-                <button onClick={ (event) => this.createOverview(event)}> Flüge anzeigen </button>
+                <button onClick={ () => this.createOverview()}> Flüge anzeigen </button>
                 <BasicTableNoSelectFlight data={this.state.flightData}/>  
             </div>
         </div> );

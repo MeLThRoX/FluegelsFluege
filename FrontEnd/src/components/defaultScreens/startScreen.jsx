@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './Wrapper.css'
+import "../../styles/Wrapper.css"
 
 class startScreen extends React.Component {
     render() { 

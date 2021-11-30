@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import "./Wrapper.css"
-import startScreen from './startScreen';
-import DatePicker from 'react-datepicker'
+import startScreen from '../defaultScreens/startScreen';
+import DatePicker from 'react-datepicker';
+
+
+import "../../styles/Wrapper.css"
 
 class BookingOverview extends Component {
     constructor(props) {
@@ -20,16 +22,20 @@ class BookingOverview extends Component {
          }
 
          this.onChange = this.onChange.bind(this);
-         this.addState = this.addState.bind(this);
          this.submitBooking = this.submitBooking.bind(this);
          this.handleDate = this.handleDate.bind(this);
          this.test2 = this.test2.bind(this)
-         
+
     }
 
+    /*
+    Aufruf wenn die Seite geladen wird.
+    Dynamisches initialisieren des State-Arrays (passengers), je nachdem welche Anzahl an Reisenden von der vorherigen Komponente als prop übergeben wird.
+    Innerhalb dieses State-Array (passengers) wird Input des Users gespeicher.
+    */
     componentDidMount() {
 
-        let inputVariables = {"first_name": "", "last_name": "", "birthdate": "", "citizenship": "", "gender": "", "numberPassport": "", "datePassport": ""}
+        let inputVariables = {"first_name": "", "last_name": "", "birthdate": null, "citizenship": "", "gender": "", "numberPassport": "", "datePassport": null}
 
         let passenger = Array.from({length: this.props.passengerCount}, (_,i) => i)
 
@@ -39,33 +45,63 @@ class BookingOverview extends Component {
 
     }
 
+    /*
+    Funktion zum handlen des Buchungs-Submit. Mit Buchungs-Button verknüpft.
+    Schickt User-Eingaben als Array mit Flight-ID an Backend.
+    Eingabeüberprüfung auf Seiten des Backends
+    */
     async submitBooking() {
 
-        if (this.state.passengersPushed < this.props.passengerCount ) {
-            alert("Bitte geben Sie die Informationen für alle Passagiere ein")
-        } else {
-            /*
-            const response = await fetch('http://localhost:5050/api/flights/search', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
-            body: JSON.stringify(dataToSubmit)
-            })
-    
-            if (response.ok) {
-                alert("Buchung erfolgreich!")
-            } else {
-                alert("Buchung nicht erfolgreich!")
-            }
-            */
-           alert("Buchung wird durchgeführt")
-           this.props.setPage("", startScreen);
+        let toSubmit = {
+            "flight_id": this.props.flight_id,
+            "passengers": this.state.passengers
         }
+
+        alert(JSON.stringify(toSubmit))
+        /*
+        const response = await fetch('/api/flights/book', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
+        body: JSON.stringify(toSubmit)
+        })
+
+        let data = await response.text()
+
+        if (data  === "OK") {
+            alert("Buchung erfolgreich!")
+        } else {
+            alert("Error: " + data)
+        }
+
+        this.props.setPage("", startScreen);
+        */
     }
 
-    test2() {
-        alert(JSON.stringify(this.state.passengers));
+    
+    /*
+    Funtkion zum dynamischen handeln der Usereingaben vom DatePicker.
+    Da hier die Eingaben leicht anders gehandelt werden müssen im vergleich zu den anderen Attributen, wird eine eigene Funktion benötigt.
+    Logik ist gleich der Methode onChange().
+    */
+    handleDate(id, name, date) {
+
+        let newPass = {...this.state.passengers[id], [name]: date }
+
+        let newSt = [
+            ...this.state.passengers.slice(0,id),
+            newPass,
+            ...this.state.passengers.slice(id+1)
+        ]
+
+        this.setState({passengers: newSt})
+
     }
 
+    /*
+    Funtkion zum dynamischen handeln der Usereingaben.
+    Usereingaben werden in einem Array von JSON-Objecten gespeichert.
+    Bei Eingabe wird das JSON-Objekt des aktuell geänderten Passagiers aus dem state genommen und durch die neue Eingabe ersetzt.
+    */
     onChange(id ,e) {
 
         let newPass = {...this.state.passengers[id], [e.target.name]: e.target.value}
@@ -79,32 +115,17 @@ class BookingOverview extends Component {
         this.setState({passengers: newSt})
     }
 
-    handleDate(id, name, date) {
-
-        let newPass = {...this.state.passengers[id], [name]: date}
-
-        let newSt = [
-            ...this.state.passengers.slice(0,id),
-            newPass,
-            ...this.state.passengers.slice(id+1)
-        ]
-
-        this.setState({passengers: newSt})
-
-    }
-
-    addState() {
-        this.setState(prevState => {
-            return {passengersPushed: prevState.passengersPushed}
-         });
-    }
-    
-    test() {
-
-        return <div>
+    /*
+    Funktion zum dynamischen Erstellen von Input-Boxen.
+    Map über zuvor erstellten Passenger-Array. Pro Element in dem Array wird ein Set von Input-Boxen erstellt.
+    Eingaben in die Felder werden direkt im state hinterlegt.
+    */
+    passengerInput() {
+        return (
+        <div>
             {this.state.passengers.map((_,j,data) => {
                 return (
-                <div>
+                <div style={{margin: 15}}>
                     Bitte geben Sie die Daten für Passagier Nr. {j + 1} ein:
                     <div>
                         <input
@@ -126,9 +147,10 @@ class BookingOverview extends Component {
                     </div>
                     <div>                   
                         <DatePicker
-                            selected = {data.birthdate}
+                            selected = {data[j].birthdate}
+                            dateFormat = "yyyy-M-d"
                             onChange={(date, e) => this.handleDate(j, "birthdate", date)}
-                            placeholderText="Select a birthdate"
+                            placeholderText="Select the birthdate"
                         />       
                     </div>     
                     <div>                
@@ -160,19 +182,17 @@ class BookingOverview extends Component {
                     </div>     
                     <div>               
                         <DatePicker
-                            name="datePassport"
-                            value = {data.datePassport}
+                            selected = {data[j].datePassport}
+                            dateFormat = "yyyy-M-d"
                             onChange={(date, e) => this.handleDate(j, "datePassport", date)}
-                            dateFormat="yyyy-M-dd"
-                            placeholderText="Expirationdate of passport"
+                            placeholderText="Passport expiration date"
                         />         
                     </div>
                 </div>
                 )
-                
             })}
         </div>
-
+        )
     }
 
     render() { 
@@ -181,11 +201,9 @@ class BookingOverview extends Component {
         <div className="wrapper">
             <button onClick={this.test2}>Give State</button>
         
-            {this.test(this.props.passengerCount)}
+            {this.passengerInput(this.props.passengerCount)}
             
-            <button onClick={this.pushToConst}>Personenbezogene Daten für Passagier hinterlegen</button>
             <button onClick={this.submitBooking}>Buchung durchführen</button>
-
         </div>
         
         )
@@ -193,50 +211,3 @@ class BookingOverview extends Component {
 }
  
 export default BookingOverview;
-
-/*
-<div>
-    Sie haben bisher folgende Infos pro Passagier hinterlegt:
-    {this.state.dataToSubmit.map((data, i) => {
-        return (
-            <div style={{border: "2px solid grey"}} >
-                <p>Passagier {data.id + 1}</p>
-                <p>Vorname: {data.first_name}</p>
-                <p>Nachname: {data.last_name}</p>
-                <p>Birthdate: {data.birthdate}</p>
-                <p>Citizenship: {data.citizenship}</p>
-                <p>Gender: {data.gender}</p>
-                <p>NumberPassport: {data.numberPassport}</p>
-                <p>DatePassport: {data.datePassport}</p>
-            </div>
-        )
-    })}
-</div>
-
-pushToConst() {
-
-    let temper = [...this.state.dataToSubmit]
-
-    if ( this.state.passengersPushed < parseInt(this.props.passengerCount)) {
-        temper.push({
-            "id": this.state.passengersPushed,
-            "first_name": this.state.first_name,
-            "last_name": this.state.last_name,
-            "birthdate": this.state.birthdate + "T00:00:00Z",
-            "citizenship": this.state.citizenship,
-            "gender": this.state.gender,
-            "numberPassport": this.state.numberPassport,
-            "datePassport": this.state.datePassport
-        })
-
-        this.setState(() => {
-            return {dataToSubmit: temper}
-        })
-        this.setState(prevState => {
-            return {passengersPushed: prevState.passengersPushed + 1}
-            });
-    } else {
-        alert("Sie haben bereits alle benötigten Daten eingegeben! Führen Sie nun die Buchung durch.")
-    }
-}
-*/

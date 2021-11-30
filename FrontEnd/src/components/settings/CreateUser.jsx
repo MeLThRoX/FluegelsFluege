@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Recaptcha from 'react-recaptcha';
 
-import './Wrapper.css'
+import '../../styles/Wrapper.css'
 
 class CreateUser extends Component {
     constructor(props) {
@@ -20,11 +20,15 @@ class CreateUser extends Component {
          }
          this.handleChange = this.handleChange.bind(this);
          this.verifiyCaptcha = this.verifiyCaptcha.bind(this);
-         this.captchaLoaded = this.captchaLoaded.bind(this);
          this.startRegister = this.startRegister.bind(this);
          this.handleCheckbox = this.handleCheckbox.bind(this);
     }
 
+    /*
+    Funktion stellt API request zum registrieren des neuen Nutzers.
+    Usereingaben aus State werden, wenn AGB aktzeptiert und Captcha durchgeführt, an API geschickt.
+    Eingabevalidierung auf Seiten des Backend.
+    */
     async startRegister() {
         if (this.state.isVerified) {
             if (this.state.checked) {
@@ -62,18 +66,25 @@ class CreateUser extends Component {
         }
     }
 
+    /*
+    Methode zum Erfassen, ob Captcha erfolgreich durchgeführt wurde.
+    */
     verifiyCaptcha() {
         this.setState({isVerified: true})
     }
 
+    /*
+    Methode zum Erfassen, ob AGB aktzeptiert wurden
+    */
     handleCheckbox() {
         this.setState({checked: !this.state.checked});
     }
 
-    captchaLoaded() {
-        console.log("Captcha has loaded.")
-    }
-
+    /*
+    Primäre Handle-Funktion für Input Felder.
+    Daten werden anhand von Event-Daten direkt in State gespeichert.
+    Eingabevalidierung später auf Seiten des Backend
+    */
     handleChange(e) {
         this.setState({...this.state, [e.target.name]: e.target.value})
     }

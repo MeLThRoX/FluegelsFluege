@@ -5,7 +5,6 @@ class Header extends React.Component {
         return <div>
             <h1>FlügelsFlüge</h1>
             <p>Wir haltens simpel!</p>
-            {/*Hier sind ein paar comments*/}
         </div>;
     }
 }

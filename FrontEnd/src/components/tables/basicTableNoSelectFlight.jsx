@@ -16,7 +16,6 @@ export default function BasicTableNoSelectFlight(props) {
                 </tr>
             </thead>
             <tbody id="cursorPointer">
-                {/*Rendering data*/}
                 {data.map(function(item, key) {
                     return (
                         <>
