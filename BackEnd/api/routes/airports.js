@@ -5,8 +5,21 @@ const airports = require("../airports.json")
 
 const router = express.Router();
 
+router.get('/', authRequired, (req, res) => {
+    res.send(Object.keys(airports).map(icao => {
+        return {
+            id: airports[icao].iata,
+            name: airports[icao].name
+        }
+    }).filter(v => v.id != ""))
+})
+
 router.get('/iata', authRequired, (req, res) => {
     res.send(Object.keys(airports).map(icao => airports[icao].iata).filter(iata => iata != ""))
+})
+
+router.get('/countries', authRequired, (req, res) => {
+    res.send([...new Set(Object.keys(airports).map(icao => airports[icao].country).filter(country => country != ""))])
 })
 
 router.post('/search', authRequired, [
