@@ -1,9 +1,23 @@
 const express = require('express');
 const { check, validationResult, matchedData } = require('express-validator');
 const { authRequired, adminRequired, createPasswordHash } = require('../auth')
+const database = require('../mongo')
 
 const router = express.Router();
 const users = database.collection("users")
+
+database.listCollections({ name: 'users' }).next((err, collinfo) => {
+    if (collinfo) {
+        console.log('Collection Users already exists. No initialization required.')
+    } else {
+        console.log('Initializing Users.')
+        users.createIndexes([
+            { name: 'Username already taken', key: { 'username': 1 }, unique: true },
+            { name: 'Email already taken', key: { 'email': 1 }, unique: true },
+            { name: 'Phone number already taken', key: { 'phone': 1 }, unique: true }
+        ])
+    }
+})
 
 users.find({ username: 'admin', admin: true }).toArray((err, adminUsers) => {
     if (err) console.log('Unable to fetch admin users.')
@@ -24,8 +38,7 @@ users.find({ username: 'admin', admin: true }).toArray((err, adminUsers) => {
                 console.log('Unable to create admin user.')
             })
         } else {
-            console.log('Availible admin users:')
-            console.log(adminUsers)
+            console.log('Availible admin users:\n%o', adminUsers)
         }
     }
 })
@@ -59,7 +72,7 @@ router.patch('/', authRequired, [
     }
 })
 
-router.post('/create', authRequired, adminRequired, [
+router.post('/create', adminRequired, [
     check('first_name').notEmpty().isAlpha().withMessage("Invalid firstname"),
     check('last_name').notEmpty().isAlpha().withMessage("Invalid lastname"),
     check('username').notEmpty().isString().withMessage("Invalid username"),
@@ -79,7 +92,7 @@ router.post('/create', authRequired, adminRequired, [
     }
 })
 
-router.post('/read', authRequired, adminRequired, [
+router.post('/read', adminRequired, [
     check('first_name').optional().isAlpha().withMessage("Invalid firstname"),
     check('last_name').optional().isAlpha().withMessage("Invalid lastname"),
     check('username').optional().isString().withMessage("Invalid username"),
@@ -92,23 +105,21 @@ router.post('/read', authRequired, adminRequired, [
     if (!valid.isEmpty()) {
         res.status(400).send(valid.errors[0].msg)
     } else {
-        users.findOne(matchedData(req)).then(v => {
-            if (v) res.send(v)
-            else res.sendStatus(404)
-        }).catch(() => {
-            res.sendStatus(500)
+        users.find(matchedData(req)).toArray((err, val) => {
+            if (err) res.sendStatus(500)
+            else res.send(val)
         })
     }
 })
 
 // TODO sanatize
-router.post('/update', authRequired, adminRequired, (req, res) => {
+router.post('/update', adminRequired, (req, res) => {
     users.findOneAndUpdate(req.body.find, { $set: req.body.update }, () => {
         res.sendStatus(200)
     })
 })
 
-router.post('/delete', authRequired, adminRequired, [
+router.post('/delete', adminRequired, [
     check('first_name').optional().isAlpha().withMessage("Invalid firstname"),
     check('last_name').optional().isAlpha().withMessage("Invalid lastname"),
     check('username').optional().isString().withMessage("Invalid username"),

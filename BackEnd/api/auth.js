@@ -3,6 +3,7 @@ const crypto = require('crypto')
 const express = require('express');
 const { check, validationResult, matchedData } = require('express-validator');
 const log = require('./log')
+const database = require('./mongo')
 
 const router = express.Router();
 const users = database.collection("users")
@@ -38,14 +39,14 @@ router.post('/register', [
     const valid = validationResult(req)
     if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
     else {
-        password = crypto.createHash('sha256').update(req.body.password).digest('hex')
+        password = createPasswordHash(req.body.password)
 
         users.insertOne({ ...matchedData(req), password, admin: false }).then(() => {
             const { first_name, last_name, username, email } = matchedData(req)
             const token = jwt.sign({ first_name, last_name, username, email }, config.jsonwebtoken)
             res.cookie('jwt', token).sendStatus(201)
-        }).catch(() => {
-            res.sendStatus(500)
+        }).catch(error => {
+            res.sendStatus(400)
         })
     }
 })
@@ -59,12 +60,12 @@ function authRequired(req, res, next) {
     const token = req.cookies.jwt
 
     if (!token)
-    return res.status(401).send('No token, authorisation denied!')
-    
+        return res.status(401).send('No token, authorisation denied!')
+
     try {
         jwt.verify(token, config.jsonwebtoken, (err, decode) => {
             if (err) throw err;
-            
+
             req.user = decode;
             log('user', `${req.user.username} ${req.method} ${req.originalUrl}`)
             next()
@@ -77,11 +78,10 @@ function authRequired(req, res, next) {
 function adminRequired(req, res, next) {
     authRequired(req, res, () => { })
     users.findOne({ email: req.user.email }).then(value => {
-        if (!value) res.status(403).send("Unable to login")
-        else {
+        if (value.admin == true) {
             log('admin', `${req.user.username} ${req.method} ${req.originalUrl}`)
             next()
-        }
+        } else res.sendStatus(401)
     }).catch(() => {
         res.status(500)
     })
