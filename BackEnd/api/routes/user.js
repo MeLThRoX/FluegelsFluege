@@ -1,3 +1,4 @@
+const { ObjectId } = require('bson');
 const express = require('express');
 const { check, validationResult, matchedData } = require('express-validator');
 const { authRequired, adminRequired, createPasswordHash } = require('../auth')
@@ -93,6 +94,7 @@ router.post('/create', adminRequired, [
 })
 
 router.post('/read', adminRequired, [
+    check('_id').optional().isMongoId().customSanitizer(v => ObjectId(v)).withMessage("Invalid firstname"),
     check('first_name').optional().isAlpha().withMessage("Invalid firstname"),
     check('last_name').optional().isAlpha().withMessage("Invalid lastname"),
     check('username').optional().isString().withMessage("Invalid username"),
@@ -112,14 +114,35 @@ router.post('/read', adminRequired, [
     }
 })
 
-// TODO sanatize
-router.post('/update', adminRequired, (req, res) => {
-    users.findOneAndUpdate(req.body.find, { $set: req.body.update }, () => {
-        res.sendStatus(200)
-    })
+router.post('/update', adminRequired, [
+    check('find._id').optional().isMongoId().customSanitizer(v => ObjectId(v)).withMessage("Invalid ID Format In Find"),
+    check('find.first_name').optional().isAlpha().withMessage("Invalid Firstname Format In Find"),
+    check('find.last_name').optional().isAlpha().withMessage("Invalid Lastname Format In Find"),
+    check('find.username').optional().isString().withMessage("Invalid Username Format In Find"),
+    check('find.email').optional().isEmail().withMessage("Invalid Email Format In Find"),
+    check('find.phone').optional().isMobilePhone().withMessage("Invalid Phone Format In Find"),
+    check('find.credit_card').optional().isCreditCard().withMessage("Invalid CC Format In Find"),
+    check('find.admin').optional().isBoolean().withMessage("Invalid Admin Format In Find"),
+    check('update.first_name').optional().isAlpha().withMessage("Invalid Firstname Format In Update"),
+    check('update.last_name').optional().isAlpha().withMessage("Invalid Lastname Format In Update"),
+    check('update.username').optional().isString().withMessage("Invalid Username In Update"),
+    check('update.email').optional().isEmail().withMessage("Invalid Email Format In Update"),
+    check('update.phone').optional().isMobilePhone().withMessage("Invalid Phone Format In Update"),
+    check('update.credit_card').optional().isCreditCard().withMessage("Invalid CC Format In Update"),
+    check('update.admin').optional().isBoolean().withMessage("Invalid Admin parameter In Update")
+], (req, res) => {
+    const valid = validationResult(req)
+    if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
+    else {
+        users.findOneAndUpdate(matchedData(req).find, { $set: matchedData(req).update }, (err, val) => {
+            if (err) res.sendStatus(400)
+            else res.sendStatus(200)
+        })
+    }
 })
 
 router.post('/delete', adminRequired, [
+    check('_id').optional().isMongoId().customSanitizer(v => ObjectId(v)).withMessage("Invalid firstname"),
     check('first_name').optional().isAlpha().withMessage("Invalid firstname"),
     check('last_name').optional().isAlpha().withMessage("Invalid lastname"),
     check('username').optional().isString().withMessage("Invalid username"),

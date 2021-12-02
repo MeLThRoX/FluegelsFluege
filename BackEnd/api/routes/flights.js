@@ -1,3 +1,4 @@
+const { ObjectId } = require('bson');
 const express = require('express');
 const { check, validationResult, matchedData } = require('express-validator');
 const { authRequired, adminRequired } = require('../auth')
@@ -27,7 +28,7 @@ router.post('/create', adminRequired, [
 })
 
 router.post('/read', adminRequired, [
-    check('_id').optional().isMongoId().withMessage('Invalid ID Format'),
+    check('_id').optional().isMongoId().customSanitizer(v => new ObjectId(v)).withMessage('Invalid ID Format'),
     check('orig').optional().isString().withMessage('Invalid origin'),
     check('dest').optional().isString().withMessage('Invalid Destination'),
     check('time').optional().isISO8601().toDate().withMessage('Invalid time'),
@@ -46,26 +47,46 @@ router.post('/read', adminRequired, [
     }
 })
 
-// TODO sanatize
-router.post('/update', adminRequired, (req, res) => {
-    flights.findOneAndUpdate(req.body.find, { $set: req.body.update }, () => {
-        res.sendStatus(200)
-    })
+router.post('/update', adminRequired, [
+    check('find._id').optional().isMongoId().customSanitizer(v => new ObjectId(v)).withMessage('Invalid ID Format In Find'),
+    check('find.orig').optional().isString().withMessage('Invalid Origin Format In Find'),
+    check('find.dest').optional().isString().withMessage('Invalid Destination Format In Find'),
+    check('find.time').optional().isISO8601().toDate().withMessage('Invalid Time Format In Find'),
+    check('find.seats').optional().isInt().withMessage('Invalid Set Number Format In Find'),
+    check('find.price').optional().isFloat().withMessage('Invalid Price Format In Find'),
+    check('update.orig').optional().isString().withMessage('Invalid Origin Format In Update'),
+    check('update.dest').optional().isString().withMessage('Invalid Destination Format In Update'),
+    check('update.time').optional().isISO8601().toDate().withMessage('Invalid Time Format In Update'),
+    check('update.seats').optional().isInt().withMessage('Invalid Set Number Format In Update'),
+    check('update.price').optional().isFloat().withMessage('Invalid Price Format In Update')
+], (req, res) => {
+    const valid = validationResult(req)
+    if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
+    else {
+        flights.findOneAndUpdate(matchedData(req).find, { $set: matchedData(req).update }, (err, val) => {
+            if (err) res.sendStatus(400)
+            else res.sendStatus(200)
+        })
+    }
 })
 
 router.post('/delete', adminRequired, [
-    check('_id').optional().isMongoId().withMessage('Invalid ID Format'),
+    check('_id').optional().isMongoId().customSanitizer(v => new ObjectId(v)).withMessage('Invalid ID Format'),
     check('orig').optional().isString().withMessage('Invalid Origin Format'),
     check('dest').optional().isString().withMessage('Invalid Destination Format'),
     check('time').optional().isISO8601().toDate().withMessage('Invalid Time Format'),
     check('seats').optional().isInt().withMessage('Invalid Seat Number Format')
 ], (req, res) => {
-    flights.findOneAndDelete(matchedData(req)).then(v => {
-        if (!v) res.sendStatus(404)
-        else res.sendStatus(200)
-    }).catch(() => {
-        res.sendStatus(500)
-    })
+    const valid = validationResult(req)
+    if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
+    else {
+        flights.findOneAndDelete(matchedData(req)).then(v => {
+            if (!v) res.sendStatus(404)
+            else res.sendStatus(200)
+        }).catch(() => {
+            res.sendStatus(500)
+        })
+    }
 })
 
 router.post('/search', authRequired, [
@@ -84,7 +105,7 @@ router.post('/search', authRequired, [
 })
 
 router.post('/book', authRequired, [
-    check('flight_id').optional().isString().withMessage('Invalid Flight-ID Format'),
+    check('flight_id').optional().isMongoId().customSanitizer(v => new ObjectId(v)).withMessage('Invalid Flight-ID Format'),
     check('passengers.*.first_name').notEmpty().isAlpha().withMessage('Invalid Firstname Format'),
     check('passengers.*.last_name').notEmpty().isAlpha().withMessage('Invalid Lastname Format'),
     check('passengers.*.birthdate').notEmpty().isISO8601().toDate().withMessage('Invalid Birthdate Format'),
@@ -109,7 +130,7 @@ router.post('/book', authRequired, [
 })
 
 router.post('/passengers', adminRequired, [
-    check('flight_id').optional().isString().withMessage('Invalid Flight-ID Format'),
+    check('flight_id').optional().isMongoId().customSanitizer(v => new ObjectId(v)).withMessage('Invalid Flight-ID Format'),
 ], (req, res) => {
     const valid = validationResult(req)
     if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)

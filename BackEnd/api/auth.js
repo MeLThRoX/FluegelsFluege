@@ -51,7 +51,6 @@ router.post('/register', [
     }
 })
 
-// TODO use salt and another algorithm
 function createPasswordHash(password) {
     return crypto.scryptSync(password, config.password_salt, 64).toString('hex')
 }

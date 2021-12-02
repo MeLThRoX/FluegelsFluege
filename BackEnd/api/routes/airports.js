@@ -25,10 +25,16 @@ router.get('/', (req, res) => {
     })
 })
 
-router.get('/:prop', (req, res) => {
-    airports.distinct(req.params.prop).then(val => {
-        res.send(val)
-    })
+router.get('/:prop', [
+    check('prop').isIn(['icao', 'iata', 'name', 'city', 'state', 'country'])
+], (req, res) => {
+    const valid = validationResult(req)
+    if (!valid.isEmpty()) res.sendStatus(404)
+    else {
+        airports.distinct(matchedData(req).prop).then(val => {
+            res.send(val)
+        })
+    }
 })
 
 router.post('/search', [
