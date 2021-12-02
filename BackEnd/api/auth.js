@@ -75,7 +75,6 @@ function authRequired(req, res, next) {
 }
 
 function adminRequired(req, res, next) {
-    authRequired(req, res, () => { })
     users.findOne({ email: req.user.email }).then(value => {
         if (value.admin == true) {
             log('admin', `${req.user.username} ${req.method} ${req.originalUrl}`)

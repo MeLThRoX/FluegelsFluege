@@ -73,7 +73,7 @@ router.patch('/', authRequired, [
     }
 })
 
-router.post('/create', adminRequired, [
+router.post('/create', authRequired, adminRequired, [
     check('first_name').notEmpty().isAlpha().withMessage("Invalid firstname"),
     check('last_name').notEmpty().isAlpha().withMessage("Invalid lastname"),
     check('username').notEmpty().isString().withMessage("Invalid username"),
@@ -93,7 +93,7 @@ router.post('/create', adminRequired, [
     }
 })
 
-router.post('/read', adminRequired, [
+router.post('/read', authRequired, adminRequired, [
     check('_id').optional().isMongoId().customSanitizer(v => ObjectId(v)).withMessage("Invalid firstname"),
     check('first_name').optional().isAlpha().withMessage("Invalid firstname"),
     check('last_name').optional().isAlpha().withMessage("Invalid lastname"),
@@ -114,7 +114,7 @@ router.post('/read', adminRequired, [
     }
 })
 
-router.post('/update', adminRequired, [
+router.post('/update', authRequired, adminRequired, [
     check('find._id').optional().isMongoId().customSanitizer(v => ObjectId(v)).withMessage("Invalid ID Format In Find"),
     check('find.first_name').optional().isAlpha().withMessage("Invalid Firstname Format In Find"),
     check('find.last_name').optional().isAlpha().withMessage("Invalid Lastname Format In Find"),
@@ -141,7 +141,7 @@ router.post('/update', adminRequired, [
     }
 })
 
-router.post('/delete', adminRequired, [
+router.post('/delete', authRequired, adminRequired, [
     check('_id').optional().isMongoId().customSanitizer(v => ObjectId(v)).withMessage("Invalid firstname"),
     check('first_name').optional().isAlpha().withMessage("Invalid firstname"),
     check('last_name').optional().isAlpha().withMessage("Invalid lastname"),
