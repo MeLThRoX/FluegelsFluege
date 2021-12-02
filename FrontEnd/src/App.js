@@ -64,7 +64,7 @@ class App extends React.Component {
     } else {
       alert("Bitte loggen Sie sich ein!")
     }
-
+    
   }
 
   onButtonClicked(e, toOpen){

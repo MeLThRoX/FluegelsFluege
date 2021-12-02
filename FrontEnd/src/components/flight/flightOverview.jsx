@@ -129,11 +129,13 @@ class FlightOverview extends Component {
 
     const selectedData = {
 
-      "origin": this.state.origin,
-      "destination": this.state.destination,
-      "time": format(this.state.time,"yyyy-M-d'T'hh:mm:ss'Z'")
+      "orig": "IST",
+      "dest": "FRA",
+      "time": "2021-11-19T06:00:00Z"
      
     }
+
+    //"time": format(this.state.time,"yyyy-M-dd'T'hh:mm:ss'Z'")
 
     const response = await fetch('/api/flights/search', {
       method: 'POST',
@@ -249,7 +251,7 @@ class FlightOverview extends Component {
                 timeFormat="hh:mm aa"
                 timeIntervals={20}
                 timeCaption="time"
-                dateFormat="yyyy-M-d hh:mm aa"
+                dateFormat="yyyy-M-dd hh:mm aa"
                 minDate={new Date()}
                 filterTime={filterPassedTime}
             />
@@ -263,7 +265,7 @@ class FlightOverview extends Component {
           <p>Ausgewähltes Ziel-Land: {this.state.destination_cca2}</p>
           <p>Ausgewähltes Ziel-Flughafe: {this.state.destination_port}</p>
           <p>Anzahl Passagiere: {this.state.anzahlReisende}</p>
-          <p>Ausgewähltes Datum: {format(this.state.time, "yyyy-M-d'T'hh:mm:ss'Z'")}</p>
+          <p>Ausgewähltes Datum: {format(this.state.time, "yyyy-M-dd'T'hh:mm:ss'Z'")}</p>
         </div>
       <button onClick={() => this.handleSubmit()}>Nach Flug suchen</button> 
       <div style={{margin: 15}}>
