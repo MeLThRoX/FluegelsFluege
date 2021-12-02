@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const crypto = require('crypto')
+const crypto = require('crypto');
 const express = require('express');
 const { check, validationResult, matchedData } = require('express-validator');
 const log = require('./log')
@@ -53,7 +53,7 @@ router.post('/register', [
 
 // TODO use salt and another algorithm
 function createPasswordHash(password) {
-    return crypto.createHash('sha256').update(password).digest('hex')
+    return crypto.scryptSync(password, config.password_salt, 64).toString('hex')
 }
 
 function authRequired(req, res, next) {
