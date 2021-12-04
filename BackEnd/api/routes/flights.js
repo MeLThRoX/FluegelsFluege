@@ -38,11 +38,9 @@ router.post('/read', authRequired, adminRequired, [
     if (!valid.isEmpty()) {
         res.status(400).send(valid.errors[0].msg)
     } else {
-        flights.findOne(matchedData(req)).then(v => {
-            if (v) res.send(v)
-            else res.sendStatus(404)
-        }).catch(() => {
-            res.sendStatus(500)
+        flights.find(matchedData(req)).toArray((err, v) => {
+            if (err) res.sendStatus(500)
+            else res.send(v)
         })
     }
 })
