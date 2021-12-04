@@ -18,7 +18,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       primePage: BasicScreen,
-      flighIdtToBook: "",
+      flightToBook: {},
       countPassengers: 1,
       isLoggedIn: false
     };
@@ -26,20 +26,20 @@ class App extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.onButtonClicked = this.onButtonClicked.bind(this);
     this.handleSettings = this.handleSettings.bind(this);
-    this.setFlightID = this.setFlightID.bind(this);
+    this.setFlight = this.setFlight.bind(this);
     this.setPassengerCount = this.setPassengerCount.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
     this.logOut = this.logOut.bind(this);
   }
 
   handleChange(date) {
-    this.setState({
-      startDate: date
-    })
+    this.setState({startDate: date})
   }
 
-  setFlightID(ID) {
-    this.setState({flighIdtToBook: ID})
+  setFlight(data) {
+
+    this.setState({flightToBook: data})
+
   }
 
   setPassengerCount(newCount) {
@@ -104,9 +104,9 @@ class App extends React.Component {
             this.state.primePage, {
               checkLogin: this.isLoggedIn,
               setPage: this.onButtonClicked, 
-              setFlightID: this.setFlightID, 
-              setPassengerCount: this.setPassengerCount, 
-              flightID: this.state.flighIdtToBook,
+              setFlight: this.setFlight, 
+              setPassengerCount: this.setPassengerCount,
+              flightData: this.state.flightToBook,
               passengerCount: this.state.countPassengers
               })}
         </div>

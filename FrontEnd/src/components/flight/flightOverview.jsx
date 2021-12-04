@@ -24,7 +24,7 @@ class FlightOverview extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      countries: ["DE", "FR"],
+      countries: [],
       port_start: [],
       port_dest: [],
       numbers: [1,2,3,4,5,6,7,8],
@@ -43,6 +43,7 @@ class FlightOverview extends Component {
     this.getCountries = this.getCountries.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.handleStuff = this.handleStuff.bind(this);
+    this.updatePorts = this.updatePorts.bind(this);
  
   }
 
@@ -62,7 +63,7 @@ class FlightOverview extends Component {
   */
   async getCountries() {
 
-    const response = await fetch('/api/airports/countries', {
+    const response = await fetch('/api/airports/country', {
       method: 'GET',
       headers: {'Content-Type': 'application/json', 'charset':'utf-8'}
     })
@@ -70,6 +71,11 @@ class FlightOverview extends Component {
     let data = await response.json()
 
     this.setState({countries: data})
+
+    this.setState({origin_cca2: data[0]})
+    this.updatePorts("origin_cca2", data[0])
+    this.setState({destination_cca2: data[0]})
+    this.updatePorts("destination_cca2", data[0])
 
   }
 
@@ -107,9 +113,16 @@ class FlightOverview extends Component {
       body: JSON.stringify(toSubmit)
     })
     
-    let data = await response.json()
+    const data = await response.json()
 
-    alert(JSON.stringify(data))
+    if (name === "destination_cca2") {
+      this.setState({port_dest: data})
+      this.setState({destination_port: data[0].iata})
+    } else {
+      this.setState({port_start: data})
+      this.setState({origin_port: data[0].iata})
+    }
+    
 
   }
 
@@ -129,13 +142,11 @@ class FlightOverview extends Component {
 
     const selectedData = {
 
-      "orig": "IST",
-      "dest": "FRA",
-      "time": "2021-11-19T06:00:00Z"
-     
+      "orig": this.state.origin_port,
+      "dest": this.state.destination_port,
+      "time": format(this.state.time, "yyyy-M-dd'T'hh:mm:ss'Z'")
+      
     }
-
-    //"time": format(this.state.time,"yyyy-M-dd'T'hh:mm:ss'Z'")
 
     const response = await fetch('/api/flights/search', {
       method: 'POST',
@@ -156,9 +167,9 @@ class FlightOverview extends Component {
   Methode setzt ändert durch prop-Methoden den state in App.js
   Auf die Daten kann dann von der neu geöffneten Child-Componente BookingOverview zugegriffen werden.
   */
-  handleBooking(e, newID) {
+  handleBooking(e, data) {
     
-    this.props.setFlightID(newID)
+    this.props.setFlight(data)
     this.props.setPassengerCount(this.state.anzahlReisende)
     this.props.setPage(e, BookingOverview)
 
@@ -188,19 +199,23 @@ class FlightOverview extends Component {
         <option key={i} value={item}>{item}</option>
       )
     })
-    
+
     let portListOrigin = (this.state.port_start.length > 0 &&
       port_start.map((item, i) => {
-        return (
-          <option key={i} value={item.iata}>{item.name}</option>
-        )
+        if (item.iata != "" && item.name != ""){
+          return (
+            <option key={i} value={item.iata}>{item.name}</option>
+          )
+        }
     }))
     
     let portListDest = (this.state.port_dest.length > 0 &&
       port_dest.map((item, i) => {
-        return (
-          <option key={i} value={item.iata}>{item.name}</option>
-        )
+        if (item.iata != "" && item.name != ""){
+          return (
+            <option key={i} value={item.iata}>{item.name}</option>
+          )
+        }
     }))
     
 
@@ -209,11 +224,13 @@ class FlightOverview extends Component {
         <div>
           <div>
             In welchem Land wollen Sie starten:
+            <br/>
             <select value={this.state.origin_cca2} onChange={(e) => this.handleStuff(e, "origin_cca2")}>
               {countriesList}
             </select>
             <br/>
             Von welchem Flughafen aus wollen Sie starten:
+            <br/>
             <select value={this.state.origin_port} onChange={(e) => this.handleStuff(e, "origin_port")}>
               {portListOrigin}
             </select>
@@ -221,11 +238,13 @@ class FlightOverview extends Component {
           <br/>
           <div>
             In welchem Land wollen Sie landen:
+            <br/>
             <select value={this.state.destination_cca2} onChange={(e) => this.handleStuff(e, "destination_cca2")}>
               {countriesList}
             </select>
             <br/>
             Bei welchem Flughafen wollen Sie landen:
+            <br/>
             <select value={this.state.destination_port} onChange={(e) => this.handleStuff(e, "destination_port")}>
               {portListDest}
             </select>
@@ -258,7 +277,7 @@ class FlightOverview extends Component {
           </div>
         </div>
         <br/>
-        {/* Keine Ausgabevalidierung nötig, da dies von React automatisch übernommen wird*/}
+        {/* Keine Ausgabevalidierung nötig, da dies von React automatisch übernommen wird
         <div>
           <p>Ausgewähltes Start-Land: {this.state.origin_cca2}</p>
           <p>Ausgewähltes Start-Flughafen: {this.state.origin_port}</p>
@@ -267,6 +286,7 @@ class FlightOverview extends Component {
           <p>Anzahl Passagiere: {this.state.anzahlReisende}</p>
           <p>Ausgewähltes Datum: {format(this.state.time, "yyyy-M-dd'T'hh:mm:ss'Z'")}</p>
         </div>
+        */}
       <button onClick={() => this.handleSubmit()}>Nach Flug suchen</button> 
       <div style={{margin: 15}}>
         <BasicTableSelectFlight data={this.state.flights} setFlightID={this.handleBooking}/>

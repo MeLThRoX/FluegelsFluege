@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import BasicTableNoSelectFlight from '../tables/basicTableNoSelectFlight';
 import BasicTableNoSelectUser from '../tables/basicTableNoSelectUser';
+import BasicTableShowFlights from '../tables/basicTableShowFlights';
 
 
 class SettingsAdmin extends Component {
@@ -11,6 +12,7 @@ class SettingsAdmin extends Component {
             inputCreateDestination: "",
             inputCreateTime: "",
             inputCreateSeats: "",
+            inputCreatePrice: "",
 
             inputEditID: "",
             inputEditOrigin: "",
@@ -25,8 +27,11 @@ class SettingsAdmin extends Component {
 
             inputSearchFlightUID: "",
 
+            inputSearchFlightID: "",
+
             userData: [],
             flightData: [],
+            overviewFlights: [],
 
             foundUserID: "",
         }
@@ -35,8 +40,9 @@ class SettingsAdmin extends Component {
          this.createNewFlight = this.createNewFlight.bind(this);
          this.updateFlight = this.updateFlight.bind(this);
          this.deleteFlight = this.deleteFlight.bind(this);
-         this.createOverview = this.createOverview.bind(this);
+         this.createOverviewUser = this.createOverviewUser.bind(this);
          this.getIdByName = this.getIdByName.bind(this);
+         this.createOverviewFlight = this.createOverviewFlight.bind(this);
 
     }
 
@@ -46,7 +52,6 @@ class SettingsAdmin extends Component {
     */
     handleChange(e) {
         this.setState({...this.state, [e.target.name]: e.target.value})
-        //this.setState({pageToRender: BasicTableNoSelectUser})
     }
 
     /*
@@ -57,10 +62,11 @@ class SettingsAdmin extends Component {
     async createNewFlight() {
 
         const newFlightData={
-            "origin": this.state.inputCreateOrigin,
-            "destination": this.state.inputCreateDestination,
+            "orig": this.state.inputCreateOrigin,
+            "dest": this.state.inputCreateDestination,
             "time": this.state.inputCreateTime,
-            "seats": this.state.inputCreateSeats
+            "seats": this.state.inputCreateSeats,
+            "price": this.state.inputCreatePrice
         }
 
         const response = await fetch('/api/flights/create', {
@@ -159,12 +165,8 @@ class SettingsAdmin extends Component {
         })
     
         const data = await response.json()
-        
-        this.setState({userData: [{
-            _id: data._id, 
-            first_name: data.first_name,
-            last_name: data.last_name
-        }]});
+
+        this.setState({userData: data});
 
     }
 
@@ -174,10 +176,10 @@ class SettingsAdmin extends Component {
     Daten von Response werden in State gespeichert und dann in Tabelle dargestellt.
     Eingabevalidierung auf Seiten des Backend.
     */
-    async createOverview() {
+    async createOverviewUser() {
     
         const toSearch = {
-            "_id": [this.state.inputSearchFlightUID]
+            "_id": this.state.inputSearchFlightUID
         }
 
         const response = await fetch('/api/user/read', {
@@ -187,9 +189,43 @@ class SettingsAdmin extends Component {
         })
     
         const data = await response.json()
-         
-        //TODO - request gibt keine flight id zurück
-        alert(JSON.stringify(data))
+
+        this.setState({flightData: data[0].tickets})
+    }
+
+    async createOverviewFlight() {
+        
+        
+        if (this.state.inputSearchFlightID != "") {
+
+            const toSearch = {
+                "_id": this.state.inputSearchFlightID
+            }    
+
+            const response = await fetch('/api/flights/read', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
+            body: JSON.stringify(toSearch)
+            })
+        
+            const data = await response.json()
+    
+            this.setState({overviewFlights: data})
+
+            alert(JSON.stringify(this.state.overviewFlights))
+
+        } else {
+
+            const response = await fetch('/api/flights/read', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
+            body: JSON.stringify({})
+            })
+        
+            const data = await response.json()
+    
+            this.setState({overviewFlights: data})
+        }
     }
 
     render() { 
@@ -234,6 +270,16 @@ class SettingsAdmin extends Component {
                         placeholder="Seats" 
                         name ='inputCreateSeats'
                         value={this.state.inputCreateSeats}
+                        onChange={this.handleChange}
+                    />
+                </div> 
+                <div>
+                    <input 
+                        style={{marginLeft: '20%',width: '60%'}} 
+                        type="text" 
+                        placeholder="Price" 
+                        name ='inputCreatePrice'
+                        value={this.state.inputCreatePrice}
                         onChange={this.handleChange}
                     />
                 </div> 
@@ -349,8 +395,23 @@ class SettingsAdmin extends Component {
                         onChange={this.handleChange}
                     />
                 </div>
-                <button onClick={ () => this.createOverview()}> Flüge anzeigen </button>
+                <button onClick={ () => this.createOverviewUser()}> Flüge anzeigen </button>
                 <BasicTableNoSelectFlight data={this.state.flightData}/>  
+            </div>
+            <div style={{border: "3px solid green", textAlign:'center'}}>
+                Übersicht zu Flügen pro ID. Wenn Sie eine ID eingeben, werden Daten zu diesem Flug angezeigt. Lassen Sie das Feld leer, werden alle Flüge angezeigt.
+                <div>
+                    <input 
+                        style={{marginLeft: '20%',width: '60%'}} 
+                        type="text" 
+                        placeholder="ID des Flugs" 
+                        name ='inputSearchFlightID'
+                        value={this.state.inputSearchFlightID}
+                        onChange={this.handleChange}
+                    />
+                </div>
+                <button onClick={ () => this.createOverviewFlight()}> Flüge anzeigen </button>
+                <BasicTableShowFlights data={this.state.overviewFlights}/>  
             </div>
         </div> );
     }
