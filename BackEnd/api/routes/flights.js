@@ -27,7 +27,7 @@ router.post('/create', authRequired, adminRequired, [
     }
 })
 
-router.post('/read', authRequired, adminRequired, [
+router.post('/read', authRequired, [
     check('_id').optional().isMongoId().customSanitizer(v => ObjectId(v)).withMessage('Invalid ID Format'),
     check('orig').optional().isString().withMessage('Invalid origin'),
     check('dest').optional().isString().withMessage('Invalid Destination'),
