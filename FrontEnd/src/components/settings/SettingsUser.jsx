@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import BasicTableNoSelectFlight from '../tables/basicTableNoSelectFlight';
+import BasicTableNoSelectPassangers from '../tables/basicTableNoSelectFlight';
 import BasicTableShowFlights from '../tables/basicTableShowFlights';
 
 import '../../styles/Wrapper.css'
@@ -86,10 +86,13 @@ class SettingsUser extends Component {
                 "last_name": this.state.last_name,
                 "username": this.state.username,
                 "email": this.state.email,
-                "password": this.state.password,
                 "phone": this.state.phone,
                 "credit_card": this.state.credit_card
                 }
+
+            if (this.state.password != "") toSubmit["password"] = this.state.password;
+
+            alert(JSON.stringify(toSubmit))
 
             const response = await fetch('/api/user', {
                 method: 'PATCH',
@@ -141,16 +144,16 @@ class SettingsUser extends Component {
             <div>
             <input
                 type="text"
-                name="new_first_name"            
+                name="first_name"            
                 value={this.state.first_name}           
-                onChange={this.handleChange}
+                onChange={(e) => this.handleChange(e)}
                 placeholder="Vorname"
             />
             </div>{" "}
             <div>                    
                 <input            
                     type="text"            
-                    name="new_last_name"           
+                    name="last_name"           
                     value={this.state.last_name}            
                     onChange={this.handleChange}  
                     placeholder="Nachname"        
@@ -159,7 +162,7 @@ class SettingsUser extends Component {
             <div>                   
                 <input            
                     type="text"            
-                    name="new_username"           
+                    name="username"           
                     value={this.state.username}            
                     onChange={this.handleChange} 
                     placeholder="Username"         
@@ -168,7 +171,7 @@ class SettingsUser extends Component {
             <div>                
                 <input            
                     type="email"            
-                    name="new_email"           
+                    name="email"           
                     value={this.state.email}            
                     onChange={this.handleChange}     
                     placeholder="Email-Adresse"     
@@ -177,7 +180,7 @@ class SettingsUser extends Component {
             <div>               
                 <input            
                     type="password"            
-                    name="new_password"           
+                    name="password"           
                     value={this.state.password}            
                     onChange={this.handleChange}  
                     placeholder="Passwort"        
@@ -185,7 +188,7 @@ class SettingsUser extends Component {
             </div><div>                   
                 <input            
                     type="password"            
-                    name="new_password_check"           
+                    name="password_check"           
                     value={this.state.password_check}            
                     onChange={this.handleChange}   
                     placeholder="Passwort bestätigen"       
@@ -194,7 +197,7 @@ class SettingsUser extends Component {
             <div>                    
                 <input            
                     type="text"            
-                    name="new_phone"           
+                    name="phone"           
                     value={this.state.phone}            
                     onChange={this.handleChange}  
                     placeholder="Telefonnummer"       
@@ -203,7 +206,7 @@ class SettingsUser extends Component {
             <div>                
                 <input            
                     type="text"            
-                    name="new_credit_card"           
+                    name="credit_card"           
                     value={this.state.credit_card}            
                     onChange={this.handleChange}        
                     placeholder="Kreditkartennummer"  
@@ -213,7 +216,7 @@ class SettingsUser extends Component {
             
             <div style={{margin: 15}}>
                 Übersicht zu gebuchten Flügen:
-                <BasicTableNoSelectFlight data={this.state.booked_flights}/>
+                <BasicTableNoSelectPassangers data={this.state.booked_flights}/>
             </div>
             <div style={{margin: 15, textAlign:'center'}}>
                 Übersicht zu Flügen pro ID. Wenn Sie eine ID eingeben, werden Daten zu diesem Flug angezeigt. Lassen Sie das Feld leer, werden alle Flüge angezeigt.

@@ -28,7 +28,6 @@ class App extends React.Component {
     this.handleSettings = this.handleSettings.bind(this);
     this.setFlight = this.setFlight.bind(this);
     this.setPassengerCount = this.setPassengerCount.bind(this);
-    this.handleLogin = this.handleLogin.bind(this);
     this.logOut = this.logOut.bind(this);
   }
 
@@ -79,12 +78,6 @@ class App extends React.Component {
 
   }
 
-  handleLogin() {
-
-    this.setState({primePage: LoginScreen})
-
-  }
-
   render() { 
     return( 
     <Fragment>
@@ -122,7 +115,7 @@ class Content extends React.Component {
     return (
       <>
         <div class={"center"} style={{flex: 1, flexDirection: 'column'}}>
-          <button onClick = {() => this.props.clickHandlerLogin()}>Login</button>
+          <button onClick = {(e) => this.props.clickHandler(e, LoginScreen)}>Login</button>
         </div>
         <div class={"center"}>
           <button onClick = {() => this.props.clickHandlerLoggout()}>Logout</button>
