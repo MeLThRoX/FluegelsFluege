@@ -16,15 +16,12 @@ class BookingOverview extends Component {
             gender: "",
             numberPassport: "",
             datePassport: "",
-            dataToSubmit: [],
-            passengersPushed:0,
             passengers:[]
          }
 
          this.onChange = this.onChange.bind(this);
          this.submitBooking = this.submitBooking.bind(this);
          this.handleDate = this.handleDate.bind(this);
-         this.test2 = this.test2.bind(this)
 
     }
 
@@ -53,12 +50,11 @@ class BookingOverview extends Component {
     async submitBooking() {
 
         let toSubmit = {
-            "flight_id": this.props.flight_id,
+            "flight_id": this.props.flightData._id,
             "passengers": this.state.passengers
         }
 
-        alert(JSON.stringify(toSubmit))
-        /*
+
         const response = await fetch('/api/flights/book', {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
@@ -74,7 +70,7 @@ class BookingOverview extends Component {
         }
 
         this.props.setPage("", startScreen);
-        */
+
     }
 
     
@@ -198,10 +194,12 @@ class BookingOverview extends Component {
     render() { 
         return(
     
-        <div className="wrapper">
-            <button onClick={this.test2}>Give State</button>
-        
+        <div className="wrapper">        
             {this.passengerInput(this.props.passengerCount)}
+
+            <br/>
+
+            Sobald Sie auf den Button buchen drücken wird Ihre Karte mit {this.props.flightData.price * this.props.passengerCount} Euro belastet.
             
             <button onClick={this.submitBooking}>Buchung durchführen</button>
         </div>

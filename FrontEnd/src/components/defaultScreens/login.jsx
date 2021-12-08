@@ -12,7 +12,8 @@ class Login extends Component {
       username: "",
       password: "",
       isVerified: false,
-      isLoggedIn: false
+      isLoggedIn: false,
+      countFalse: 0
      }
 
      this.handleSubmit = this.handleSubmit.bind(this);
@@ -53,6 +54,12 @@ class Login extends Component {
         this.props.setPage("", startScreen)
       } else {
         alert("Error: " + response.status)
+        this.setState({countFalse: this.state.countFalse + 1})
+
+        if (this.state.countFalse > 2) {
+          this.props.setPage("",startScreen)
+        }
+
       }
     
     } else {
@@ -78,6 +85,7 @@ class Login extends Component {
             onloadCallback={this.captchaLoaded}
             verifyCallback={this.verifiyCaptcha}
           />
+          
       </div>
     );
   }

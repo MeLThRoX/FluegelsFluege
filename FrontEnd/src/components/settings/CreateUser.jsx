@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Recaptcha from 'react-recaptcha';
 
 import '../../styles/Wrapper.css'
+import startScreen from '../defaultScreens/startScreen';
 
 class CreateUser extends Component {
     constructor(props) {
@@ -54,6 +55,8 @@ class CreateUser extends Component {
                     } else {
                         alert("Error: " + resp.status)
                     }
+
+                    this.props.setPage(startScreen)
 
                 } else {
                     alert("Ihre Passwörter stimmen nicht überein!")

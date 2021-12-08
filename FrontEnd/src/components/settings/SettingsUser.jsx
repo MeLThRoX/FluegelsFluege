@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import BasicTableNoSelectFlight from '../tables/basicTableNoSelectFlight';
+import BasicTableShowFlights from '../tables/basicTableShowFlights';
 
 import '../../styles/Wrapper.css'
 
@@ -15,18 +16,24 @@ class SettingsUser extends Component {
             password_check: "",
             phone: "",
             credit_card: "",
-            booked_flights: []
+            booked_flights: [],
+
+            flightIDtoSearch: "",
+            flightsOverview: []
         }
 
         this.updateUserdata= this.updateUserdata.bind(this);
-        this.getAndSetCurrentData = this.getAndSetCurrentData.bind(this)
-        this.componentDidMount = this.componentDidMount.bind(this)
+        this.getAndSetCurrentData = this.getAndSetCurrentData.bind(this);
+        this.componentDidMount = this.componentDidMount.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 
-    async getCurrentFlights() {
-
-        //Flugdaten zu ids ausgeben für tabelle
-
+/*
+    Primäre-Handle Funktion für User-Input. 
+    Wird von Eingabefeldern direkt in State gespeichert.
+    */
+    handleChange(e) {
+        this.setState({...this.state, [e.target.name]: e.target.value})
     }
 
     // TODO - gibt keine Flights zurück - wollen wir das so lassen?
@@ -50,8 +57,11 @@ class SettingsUser extends Component {
             this.setState({email: data.email})
             this.setState({phone: data.phone})
             this.setState({credit_card: data.credit_card})
-        }
-        
+            
+            if (Object.keys(data).length > 7) {
+                this.setState({booked_flights: data.tickets})
+            }
+        }        
     }
 
     /*
@@ -61,8 +71,6 @@ class SettingsUser extends Component {
 
         this.getAndSetCurrentData()
 
-        //<getCurrentFlights />
- 
     }
 
     /*
@@ -100,6 +108,30 @@ class SettingsUser extends Component {
         } else {
             alert("Ihre eingegebenen Passwörter stimmen nicht überein!")
         }
+    }
+
+    async createOverviewFlight() {
+
+        if (this.state.flightIDtoSearch != "") {
+
+            const toSearch = {
+                "_id": this.state.flightIDtoSearch
+            }    
+
+            const response = await fetch('/api/flights/read', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
+            body: JSON.stringify(toSearch)
+            })
+        
+            const data = await response.json()
+    
+            this.setState({flightsOverview: data})
+            
+        } else {
+            alert("Bitte geben Sie eine ID ein")
+        }
+
     }
 
     render() { 
@@ -182,6 +214,21 @@ class SettingsUser extends Component {
             <div style={{margin: 15}}>
                 Übersicht zu gebuchten Flügen:
                 <BasicTableNoSelectFlight data={this.state.booked_flights}/>
+            </div>
+            <div style={{margin: 15, textAlign:'center'}}>
+                Übersicht zu Flügen pro ID. Wenn Sie eine ID eingeben, werden Daten zu diesem Flug angezeigt. Lassen Sie das Feld leer, werden alle Flüge angezeigt.
+                <div>
+                    <input 
+                        style={{marginLeft: '20%',width: '60%'}} 
+                        type="text" 
+                        placeholder="ID des Flugs" 
+                        name ='flightIDtoSearch'
+                        value={this.state.flightIDtoSearch}
+                        onChange={this.handleChange}
+                    />
+                </div>
+                <button onClick={ () => this.createOverviewFlight()}> Flüge anzeigen </button>
+                <BasicTableShowFlights data={this.state.flightsOverview}/>  
             </div>
         </div> 
         );

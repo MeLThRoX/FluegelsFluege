@@ -8,25 +8,19 @@ export default function BasicTableNoSelectFlight(props) {
         <table className="table table-hover table-bordered">
             <thead>
                 <tr>
-                    <th scope="col"><center>ID</center></th>
-                    <th scope="col">Origin</th>
-                    <th scope="col">Destination</th>
-                    <th scope="col">Time</th>
-                    <th scope="col">Passagiere</th>
+                    <th scope="col"><center>Flight-ID</center></th>
+                    <th scope="col">Vorname</th>
+                    <th scope="col">Nachname</th>
                 </tr>
             </thead>
             <tbody id="cursorPointer">
                 {data.map(function(item, key) {
                     return (
-                        <>
                         <tr key = {key}>
-                            <td><center>{item._id}</center></td>
-                            <td>{item.origin}</td>
-                            <td>{item.destination}</td>
-                            <td>{item.time}</td>
-                            <td>{JSON.stringify(item.passengers)}</td>
+                            <td><center>{item.flight_id}</center></td>
+                            <td>{item.first_name}</td>
+                            <td>{item.last_name}</td>
                         </tr>
-                        </>
                     )
                 })}
             </tbody>
