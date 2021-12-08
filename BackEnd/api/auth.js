@@ -68,7 +68,8 @@ router.post('/register', [
                     const token = jwt.sign({ first_name, last_name, username, email }, config.jsonwebtoken)
                     res.cookie('jwt', token).sendStatus(201)
                 }).catch(error => {
-                    res.sendStatus(400)
+                    if (error.code == 11000) res.status(400).send(JSON.stringify(error.keyValue) + "is already in use.")
+                    else res.sendStatus(400)
                 })
             }
         })
