@@ -347,6 +347,16 @@ class SettingsAdmin extends Component {
                         onChange={this.handleChange}
                     />
                 </div> 
+                <div>
+                    <input 
+                        style={{marginLeft: '20%',width: '60%'}} 
+                        type="text" 
+                        placeholder="Seats" 
+                        name ='inputEditSeats'
+                        value={this.state.inputEditSeats}
+                        onChange={this.handleChange}
+                    />
+                </div>
                 <DatePicker
                     style={{marginLeft: '20%',width: '60%'}} 
                     selected={this.state.inputEditTime}
@@ -358,17 +368,8 @@ class SettingsAdmin extends Component {
                     dateFormat="yyyy-M-dd hh:mm aa"
                     placeholderText="New Time"
                     minDate={new Date()}
-                />
-                <div>
-                    <input 
-                        style={{marginLeft: '20%',width: '60%'}} 
-                        type="text" 
-                        placeholder="Seats" 
-                        name ='inputEditSeats'
-                        value={this.state.inputEditSeats}
-                        onChange={this.handleChange}
-                    />
-                </div> 
+                /> 
+                <br/>
                 <button onClick={() => this.updateFlight()}> Flug updaten </button>
             </div>
             <div style={{border: "3px solid green", textAlign:'center'}}>
