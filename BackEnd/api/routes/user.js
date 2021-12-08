@@ -48,6 +48,8 @@ router.get('/', authRequired, (req, res) => {
     users.findOne({ email: req.user.email }).then(value => {
         delete value.password
         delete value.admin
+        let x = value.credit_card.replace(/ /g, '')
+        value.credit_card = x.substring(0, 2) + '** **** **** **' + x.substring(14, 16)
         res.send(value)
     }).catch(() => {
         res.status(500)

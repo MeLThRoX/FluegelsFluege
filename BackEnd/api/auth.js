@@ -8,9 +8,22 @@ const database = require('./mongo')
 const router = express.Router();
 const users = database.collection("users")
 
+let loginAttempts = []
+
 router.post('/login', [
     check('username').notEmpty().isString()
 ], (req, res) => {
+    if (!loginAttempts[req.connection.remoteAddress]) loginAttempts[req.connection.remoteAddress] = { count: 0 }
+    if (loginAttempts[req.connection.remoteAddress].count >= 3) {
+        if (new Date() - loginAttempts[req.connection.remoteAddress].lastFailure > 5000)
+            loginAttempts[req.connection.remoteAddress].count = 0;
+        else {
+            loginAttempts[req.connection.remoteAddress].lastFailure = new Date();
+            res.status(400).send("To many login attemtps")
+            return
+        }
+    }
+
     const valid = validationResult(req)
     if (!valid.isEmpty()) res.status(400).send("Format error")
     else {
@@ -18,7 +31,13 @@ router.post('/login', [
         password = createPasswordHash(password)
 
         users.findOne({ $or: [{ username }, { email: username }], password }).then(value => {
-            if (!value) res.status(400).send("Unable to login")
+            if (!value) {
+                loginAttempts[req.connection.remoteAddress] = {
+                    count: loginAttempts[req.connection.remoteAddress].count + 1,
+                    lastFailure: new Date()
+                }
+                res.status(400).send("Unable to login")
+            }
             else {
                 const { first_name, last_name, username, email } = value
                 const token = jwt.sign({ first_name, last_name, username, email }, config.jsonwebtoken)
@@ -39,17 +58,34 @@ router.post('/register', [
     const valid = validationResult(req)
     if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
     else {
-        password = createPasswordHash(req.body.password)
+        checkPwnedPassword(req.body.password).then(pwned => {
+            if (pwned) res.status(400).send("This password is PWNED! Check done by https://haveibeenpwned.com.")
+            else {
+                password = createPasswordHash(req.body.password)
 
-        users.insertOne({ ...matchedData(req), password, admin: false }).then(() => {
-            const { first_name, last_name, username, email } = matchedData(req)
-            const token = jwt.sign({ first_name, last_name, username, email }, config.jsonwebtoken)
-            res.cookie('jwt', token).sendStatus(201)
-        }).catch(error => {
-            res.sendStatus(400)
+                users.insertOne({ ...matchedData(req), password, admin: false }).then(() => {
+                    const { first_name, last_name, username, email } = matchedData(req)
+                    const token = jwt.sign({ first_name, last_name, username, email }, config.jsonwebtoken)
+                    res.cookie('jwt', token).sendStatus(201)
+                }).catch(error => {
+                    res.sendStatus(400)
+                })
+            }
         })
     }
 })
+
+async function checkPwnedPassword(password) {
+    const hash = crypto.createHash('sha1').update(password).digest('hex').toUpperCase()
+    const prefix = hash.substring(0, 5)
+    const suffix = hash.slice(5)
+
+    let res = await require('node-fetch')(`https://api.pwnedpasswords.com/range/${prefix}`)
+    if (res.ok) {
+        let data = await res.text()
+        return data.includes(suffix)
+    }
+}
 
 function createPasswordHash(password) {
     return crypto.scryptSync(password, config.password_salt, 64).toString('hex')

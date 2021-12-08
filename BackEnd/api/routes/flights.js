@@ -1,4 +1,4 @@
-const { ObjectId } = require('bson');
+const { ObjectId } = require('mongodb');
 const express = require('express');
 const { check, validationResult, matchedData } = require('express-validator');
 const { authRequired, adminRequired } = require('../auth')
