@@ -1,5 +1,7 @@
 {
+    "host": "localhost:8080",
     "port": 5000,
     "jsonwebtoken": "u@pcrg9sMpD!sttb",
-    "password_salt": "mp@i2.R@Y-GKpjr22dXkv2Q2"
+    "password_salt": "mp@i2.R@Y-GKpjr22dXkv2Q2",
+    "google_password": "vxv*dpy4fjq7QXW4chq"
 }

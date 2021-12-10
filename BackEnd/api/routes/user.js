@@ -1,11 +1,13 @@
 const { ObjectId } = require('bson');
 const express = require('express');
 const { check, validationResult, matchedData } = require('express-validator');
-const { authRequired, adminRequired, createPasswordHash } = require('../auth')
+const { authRequired, adminRequired, createPasswordHash, checkPwnedPassword } = require('../auth')
 const database = require('../mongo')
+const mail = require('../mail')
 
 const router = express.Router();
 const users = database.collection("users")
+const passwordVerifications = database.collection("password-verifications")
 
 database.listCollections({ name: 'users' }).next((err, collinfo) => {
     if (collinfo) {
@@ -56,6 +58,24 @@ router.get('/', authRequired, (req, res) => {
     })
 })
 
+router.get('/updatePassword/:_id', [
+    check('_id').notEmpty().isMongoId().customSanitizer(v => ObjectId(v))
+], (req, res) => {
+    const valid = validationResult(req)
+    if (!valid.isEmpty()) res.sendStatus(400)
+    else {
+        passwordVerifications.findOneAndDelete(matchedData(req), (err, verificationResult) => {
+            if (err) res.sendStatus(400)
+            else {
+                users.findOneAndUpdate({ email: verificationResult.value.email }, { $set: { password: verificationResult.value.password } }, (err, updateResult) => {
+                    if (err) res.sendStatus(400)
+                    else res.send("Your password has changed!")
+                })
+            }
+        })
+    }
+})
+
 router.patch('/', authRequired, [
     check('first_name').optional().isAlpha().withMessage("Invalid firstname"),
     check('last_name').optional().isAlpha().withMessage("Invalid lastname"),
@@ -68,9 +88,36 @@ router.patch('/', authRequired, [
     if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
     else {
         updateData = matchedData(req)
-        if (req.body.password) updateData.password = createPasswordHash(req.body.password)
-        users.findOneAndUpdate({ email: req.user.email }, { $set: updateData }, () => {
-            res.sendStatus(200)
+        promises = []
+
+        promises.push(new Promise((resolve, reject) => {
+            if (req.body.password) {
+                checkPwnedPassword(req.body.password).then(pwned => {
+                    if (pwned) reject("This password is PWNED! Check done by https://haveibeenpwned.com.")
+                    else {
+                        passwordVerifications.insertOne({ password: createPasswordHash(req.body.password), email: req.user.email }, (err, result) => {
+                            if (err) reject("Failed sending Mail")
+                            else {
+                                mail.sendMail(req.user.email, 'Password Verification', `http://${config.host}/api/user/updatePassword/${result.insertedId.toString()}`)
+                                resolve("Apply new password by clicking the verification-link sent to your E-Mail.")
+                            }
+                        })
+                    }
+                })
+            }
+        }))
+
+        promises.push(new Promise((resolve, reject) => {
+            users.findOneAndUpdate({ email: req.user.email }, { $set: updateData }, (err) => {
+                if (err) reject("Updating information failed")
+                else resolve("User information updated.")
+            })
+        }))
+
+        Promise.all(promises).then(values => {
+            res.send(values)
+        }).catch((reason) => {
+            res.status(400).send(reason)
         })
     }
 })
