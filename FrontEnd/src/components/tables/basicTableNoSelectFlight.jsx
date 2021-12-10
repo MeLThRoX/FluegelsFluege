@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function BasicTableNoSelectFlight(props) {
+export default function BasicTableNoSelectPassangers(props) {
 
     const data = props.data;
 

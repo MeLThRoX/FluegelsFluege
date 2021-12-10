@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import BasicTableNoSelectFlight from '../tables/basicTableNoSelectFlight';
+import BasicTableNoSelectPassangers from '../tables/basicTableNoSelectFlight';
 import BasicTableNoSelectUser from '../tables/basicTableNoSelectUser';
 import BasicTableShowFlights from '../tables/basicTableShowFlights';
+import DatePicker from 'react-datepicker';
+
 
 
 class SettingsAdmin extends Component {
@@ -24,6 +26,7 @@ class SettingsAdmin extends Component {
 
             inputSearchNameFirst: "",
             inputSearchNameLast: "",
+            inputSearchNameUser: "",
 
             inputSearchFlightUID: "",
 
@@ -80,9 +83,14 @@ class SettingsAdmin extends Component {
         if (data === "Created") {
             alert("Flight created!")
         } else {
-            alert("Error-Code: " + response.status)
+            alert("Error Code: " + response.status + ". " + data)
         }
     }
+
+    handleChangeStartDate(date) {
+        this.setState({inputEditTime: date})
+      }
+    
 
     /*
     Funktion zum Ändern von Flug bezogenen Daten in der Datenbank.
@@ -95,13 +103,13 @@ class SettingsAdmin extends Component {
             "find": {
                 "_id": this.state.inputEditID
             },
-            "update": {            
-                "origin": this.state.inputCreateOrigin,
-                "destination": this.state.inputCreateDestination,
-                "time": this.state.inputCreateTime,
-                "seats": this.state.inputCreateSeats
-            }
+            "update": {}
         }
+
+        if (this.state.inputEditOrigin != "") editFlightDate.update["orig"] = this.state.inputEditOrigin;
+        if (this.state.inputEditDestination != "") editFlightDate.update["dest"] = this.state.inputEditDestination;
+        if (this.state.inputEditTime != "") editFlightDate.update["time"] = this.state.inputEditTime;
+        if (this.state.inputEditSeats != "") editFlightDate.update["seats"] = this.state.inputEditSeats;
 
         const response = await fetch('/api/flights/update', {
         method: 'POST',
@@ -114,7 +122,7 @@ class SettingsAdmin extends Component {
         if (data === "OK") {
             alert("Flight updated!")
         } else {
-            alert("Error Code: " + response.status)
+            alert("Error Code: " + response.status+ ". " + data)
         }
         
     }
@@ -141,7 +149,7 @@ class SettingsAdmin extends Component {
         if (data === "OK") {
             alert("Flight deleted!")
         } else {
-            alert("Error-Code: " + response.status)
+            alert("Error Code: " + response.status + ". " + data)
         }
         
     }
@@ -153,21 +161,25 @@ class SettingsAdmin extends Component {
     */
     async getIdByName() {
 
-        const toSearch ={
-            "first_name": this.state.inputSearchNameFirst,
-            "last_name": this.state.inputSearchNameLast
-        }
+        const toSearch ={}
         
+        if (this.state.inputSearchNameFirst != "") toSearch["first_name"] = this.state.inputSearchNameFirst;
+        if (this.state.inputSearchNameLast != "") toSearch["last_name"] = this.state.inputSearchNameLast;
+        if (this.state.inputSearchNameUser != "") toSearch["username"] = this.state.inputSearchNameUser;
+
         const response = await fetch('/api/user/read', {
         method: 'POST',
         headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
         body: JSON.stringify(toSearch)
         })
-    
-        const data = await response.json()
 
-        this.setState({userData: data});
-
+        if (response.status === 200) {
+            const data = await response.json()
+            this.setState({userData: data});
+        } else {
+            const data = await response.text()
+            alert("Error: " + response.status + ". " + data)
+        }
     }
 
     /*
@@ -188,9 +200,16 @@ class SettingsAdmin extends Component {
         body: JSON.stringify(toSearch)
         })
     
-        const data = await response.json()
-
-        this.setState({flightData: data[0].tickets})
+        if (response.status === 200) {
+            const data = await response.json()
+            if (Object.keys(data).length > 9) {
+                this.setState({flightData: data[0].tickets})
+            }
+        } else {
+            const data = await response.text()
+            alert("Error: " + response.status + ". " + data)
+        }
+        
     }
 
     async createOverviewFlight() {
@@ -209,10 +228,13 @@ class SettingsAdmin extends Component {
             })
         
             const data = await response.json()
-    
-            this.setState({overviewFlights: data})
-
-            alert(JSON.stringify(this.state.overviewFlights))
+            
+            if (response.status === 200) {
+                this.setState({overviewFlights: data})
+            } else {
+                alert("Error: " + response.status + ". " + JSON.stringify(data))
+            }
+            
 
         } else {
 
@@ -224,7 +246,11 @@ class SettingsAdmin extends Component {
         
             const data = await response.json()
     
-            this.setState({overviewFlights: data})
+            if (response.status === 200) {
+                this.setState({overviewFlights: data})
+            } else {
+                alert("Error: " + response.status + ". " + JSON.stringify(data))
+            }
         }
     }
 
@@ -325,22 +351,25 @@ class SettingsAdmin extends Component {
                     <input 
                         style={{marginLeft: '20%',width: '60%'}} 
                         type="text" 
-                        placeholder="Time" 
-                        name ='inputEditTime'
-                        value={this.state.inputEditTime}
-                        onChange={this.handleChange}
-                    />
-                </div> 
-                <div>
-                    <input 
-                        style={{marginLeft: '20%',width: '60%'}} 
-                        type="text" 
                         placeholder="Seats" 
                         name ='inputEditSeats'
                         value={this.state.inputEditSeats}
                         onChange={this.handleChange}
                     />
-                </div> 
+                </div>
+                <DatePicker
+                    style={{marginLeft: '20%',width: '60%'}} 
+                    selected={this.state.inputEditTime}
+                    onChange={(date) => this.handleChangeStartDate(date)}
+                    showTimeSelect
+                    timeFormat="hh:mm aa"
+                    timeIntervals={20}
+                    timeCaption="time"
+                    dateFormat="yyyy-M-dd hh:mm aa"
+                    placeholderText="New Time"
+                    minDate={new Date()}
+                /> 
+                <br/>
                 <button onClick={() => this.updateFlight()}> Flug updaten </button>
             </div>
             <div style={{border: "3px solid green", textAlign:'center'}}>
@@ -363,7 +392,7 @@ class SettingsAdmin extends Component {
                     <input 
                         style={{marginLeft: '20%',width: '60%'}} 
                         type="text" 
-                        placeholder="Search First-Name" 
+                        placeholder="Search firstname" 
                         name ='inputSearchNameFirst'
                         value={this.state.inputSearchNameFirst}
                         onChange={this.handleChange}
@@ -373,9 +402,19 @@ class SettingsAdmin extends Component {
                     <input 
                         style={{marginLeft: '20%',width: '60%'}} 
                         type="text" 
-                        placeholder="Search Last-Name" 
+                        placeholder="Search lastname" 
                         name ='inputSearchNameLast'
                         value={this.state.inputSearchNameLast}
+                        onChange={this.handleChange}
+                    />
+                </div> 
+                <div>
+                    <input 
+                        style={{marginLeft: '20%',width: '60%'}} 
+                        type="text" 
+                        placeholder="Search Username" 
+                        name ='inputSearchNameUser'
+                        value={this.state.inputSearchNameUser}
                         onChange={this.handleChange}
                     />
                 </div> 
@@ -396,7 +435,7 @@ class SettingsAdmin extends Component {
                     />
                 </div>
                 <button onClick={ () => this.createOverviewUser()}> Flüge anzeigen </button>
-                <BasicTableNoSelectFlight data={this.state.flightData}/>  
+                <BasicTableNoSelectPassangers data={this.state.flightData}/>  
             </div>
             <div style={{border: "3px solid green", textAlign:'center'}}>
                 Übersicht zu Flügen pro ID. Wenn Sie eine ID eingeben, werden Daten zu diesem Flug angezeigt. Lassen Sie das Feld leer, werden alle Flüge angezeigt.
@@ -420,4 +459,17 @@ class SettingsAdmin extends Component {
 export default SettingsAdmin;
 
 
+/*
 
+<div>
+                    <input 
+                        style={{marginLeft: '20%',width: '60%'}} 
+                        type="text" 
+                        placeholder="Time" 
+                        name ='inputEditTime'
+                        value={this.state.inputEditTime}
+                        onChange={this.handleChange}
+                    />
+                </div> 
+
+*/

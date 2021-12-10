@@ -65,12 +65,10 @@ class BookingOverview extends Component {
 
         if (data  === "OK") {
             alert("Buchung erfolgreich!")
+            this.props.setPage("", startScreen);
         } else {
             alert("Error: " + data)
         }
-
-        this.props.setPage("", startScreen);
-
     }
 
     

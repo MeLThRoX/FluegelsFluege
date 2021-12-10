@@ -20,8 +20,8 @@ class CreateUser extends Component {
             checked: false
          }
          this.handleChange = this.handleChange.bind(this);
-         this.verifiyCaptcha = this.verifiyCaptcha.bind(this);
-         this.startRegister = this.startRegister.bind(this);
+         this.verifyCaptcha = this.verifyCaptcha.bind(this);
+         this.startRegistration = this.startRegistration.bind(this);
          this.handleCheckbox = this.handleCheckbox.bind(this);
     }
 
@@ -30,7 +30,7 @@ class CreateUser extends Component {
     Usereingaben aus State werden, wenn AGB aktzeptiert und Captcha durchgeführt, an API geschickt.
     Eingabevalidierung auf Seiten des Backend.
     */
-    async startRegister() {
+    async startRegistration() {
         if (this.state.isVerified) {
             if (this.state.checked) {
                 if (this.state.password === this.state.password_check) {
@@ -49,15 +49,15 @@ class CreateUser extends Component {
                     headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
                     body: JSON.stringify(toSubmit)
                     })
+
+                    let data = await resp.text();
                     
-                    if( resp.ok ){
+                    if( data === "Created"){
                         alert("Benutzer wurde erstellt")
+                        this.props.setPage("",startScreen)
                     } else {
-                        alert("Error: " + resp.status)
+                        alert("Error: " + resp.status + ". " + data)
                     }
-
-                    this.props.setPage(startScreen)
-
                 } else {
                     alert("Ihre Passwörter stimmen nicht überein!")
                 }
@@ -72,7 +72,7 @@ class CreateUser extends Component {
     /*
     Methode zum Erfassen, ob Captcha erfolgreich durchgeführt wurde.
     */
-    verifiyCaptcha() {
+    verifyCaptcha() {
         this.setState({isVerified: true})
     }
 
@@ -95,7 +95,7 @@ class CreateUser extends Component {
     render() { 
         return ( 
         <div className="wrapper">
-            <h1>Neuen Benutzer Erstellen</h1>
+            <h1>Neuen Benutzer erstellen</h1>
             <form>
                 <div>
                     <input
@@ -183,10 +183,10 @@ class CreateUser extends Component {
                 sitekey="6LeTBkkdAAAAADLu8NW6AZXaGF2CfhXMxgviRX0U"
                 render="explicit"
                 onloadCallback={this.captchaLoaded}
-                verifyCallback={this.verifiyCaptcha}
+                verifyCallback={this.verifyCaptcha}
             />
 
-            <button onClick={this.startRegister}>Registrieren</button>
+            <button onClick={this.startRegistration}>Registrieren</button>
         </div> 
         );
             
