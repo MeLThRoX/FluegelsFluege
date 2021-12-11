@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 const crypto = require('crypto');
 const express = require('express');
 const { check, validationResult, matchedData } = require('express-validator');
+const fetch = require("node-fetch")
 const log = require('./log')
 const database = require('./mongo')
 const mail = require('./mail')
@@ -15,6 +16,11 @@ let loginAttempts = []
 router.post('/login', [
     check('username').notEmpty().isString()
 ], (req, res) => {
+    if (checkRecaptcha(req.body.recaptcha) === false) {
+        res.status(400).send("Verify ReCaptcha")
+        return
+    }
+
     if (!loginAttempts[req.connection.remoteAddress]) loginAttempts[req.connection.remoteAddress] = { count: 0 }
     if (loginAttempts[req.connection.remoteAddress].count >= 3) {
         if (new Date() - loginAttempts[req.connection.remoteAddress].lastFailure > 5000)
@@ -58,6 +64,11 @@ router.post('/register', [
     check('credit_card').notEmpty().isCreditCard().customSanitizer(encode).withMessage("Invalid CC"),
     check('password').notEmpty().custom(checkPassword).customSanitizer(createPasswordHash)
 ], (req, res) => {
+    if (checkRecaptcha(req.body.recaptcha) === false) {
+        res.status(400).send("Verify ReCaptcha")
+        return
+    }
+
     const valid = validationResult(req)
     if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
     else {
@@ -76,6 +87,11 @@ router.post('/reset_password', [
     check('email').notEmpty().isEmail().withMessage("Invalid Email Format"),
     check('password').notEmpty().custom(checkPassword).customSanitizer(createPasswordHash)
 ], (req, res) => {
+    if (checkRecaptcha(req.body.recaptcha) === false) {
+        res.status(400).send("Verify ReCaptcha")
+        return
+    }
+    
     const valid = validationResult(req)
     if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
     else {
@@ -93,11 +109,17 @@ router.post('/reset_password', [
     }
 })
 
-router.get('/test/:text', (req, res) => {
-    const encoded = encode(req.params.text)
-    const decoded = decode(encoded)
-    res.send([encoded, decoded])
-})
+async function checkRecaptcha(response) {
+    const res = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+        method: "POST",
+        body: JSON.stringify({
+            secret: "6LeoFpcdAAAAAEm4vD0bO-buE3sibjv5vAWrNUw4",
+            response
+        })
+    })
+    const data = await res.json()
+    return data.success
+}
 
 function checkPassword(password) {
     return new Promise((resolve, reject) => {
