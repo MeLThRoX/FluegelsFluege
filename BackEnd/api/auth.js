@@ -122,4 +122,4 @@ function adminRequired(req, res, next) {
     })
 }
 
-module.exports = { router, authRequired, adminRequired, createPasswordHash }
+module.exports = { router, authRequired, adminRequired, createPasswordHash, checkPwnedPassword }
