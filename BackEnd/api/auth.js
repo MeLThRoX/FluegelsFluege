@@ -4,9 +4,11 @@ const express = require('express');
 const { check, validationResult, matchedData } = require('express-validator');
 const log = require('./log')
 const database = require('./mongo')
+const mail = require('./mail')
 
 const router = express.Router();
 const users = database.collection("users")
+const passwordVerifications = database.collection("password-verifications")
 
 let loginAttempts = []
 
@@ -70,6 +72,31 @@ router.post('/register', [
                 }).catch(error => {
                     if (error.code == 11000) res.status(400).send(Object.keys(error.keyValue)[0] + " is already in use.")
                     else res.sendStatus(400)
+                })
+            }
+        })
+    }
+})
+
+router.post('/reset_password', [
+    check('email').notEmpty().isEmail().withMessage("Invalid Email Format")
+], (req, res) => {
+    const valid = validationResult(req)
+    if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
+    else {
+        checkPwnedPassword(req.body.password).then(pwned => {
+            if (pwned) res.status(400).send("This password is PWNED! Check done by https://haveibeenpwned.com.")
+            else {
+                users.findOne({ email: matchedData(req).email }, (err, userResult) => {
+                    if (userResult) {
+                        passwordVerifications.insertOne({ password: createPasswordHash(req.body.password), email: matchedData(req).email }, (err, result) => {
+                            if (!err) {
+                                console.log("Sent")
+                                mail.sendMail(matchedData(req).email, 'Password Verification', `http://${config.host}/api/user/updatePassword/${result.insertedId.toString()}`)
+                            }
+                        })
+                    }
+                    res.send("if this user exists a verification link was sent by email.")
                 })
             }
         })
