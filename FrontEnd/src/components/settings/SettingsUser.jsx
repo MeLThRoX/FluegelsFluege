@@ -48,8 +48,10 @@ class SettingsUser extends Component {
             headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
         })
 
+        const data = await response.json()
+
         if (response.status === 200 || response.status === 304) {
-            const data = await response.json()
+            
 
             this.setState({first_name: data.first_name})
             this.setState({last_name: data.last_name})
@@ -61,7 +63,11 @@ class SettingsUser extends Component {
             if (Object.keys(data).length > 7) {
                 this.setState({booked_flights: data.tickets})
             }
-        }        
+        } else {
+
+            alert("Error: " + response.status + ". " + JSON.stringify(data))
+
+        }    
     }
 
     /*
@@ -105,7 +111,7 @@ class SettingsUser extends Component {
             if (data === "OK") {
                 alert("Daten erfolgreich geändert!")
             }else{
-                alert("Error: " + response.status)
+                alert("Error: " + response.status + ". " + data)
             }
 
         } else {
@@ -128,8 +134,12 @@ class SettingsUser extends Component {
             })
         
             const data = await response.json()
-    
-            this.setState({flightsOverview: data})
+
+            if ( response.status = 200) {
+                this.setState({flightsOverview: data})
+            } else {
+                alert("Error: " + response.status + ". " + JSON.stringify(data))
+            }
             
         } else {
             alert("Bitte geben Sie eine ID ein")

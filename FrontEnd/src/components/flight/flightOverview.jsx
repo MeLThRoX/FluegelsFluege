@@ -70,13 +70,19 @@ class FlightOverview extends Component {
 
     let data = await response.json()
 
-    this.setState({countries: data})
+    if (response.status === 200) {
+      this.setState({countries: data})
+      this.setState({origin_cca2: data[0]})
+      this.updatePorts("origin_cca2", data[0])
+      this.setState({destination_cca2: data[0]})
+      this.updatePorts("destination_cca2", data[0])
+    } else {
 
-    this.setState({origin_cca2: data[0]})
-    this.updatePorts("origin_cca2", data[0])
-    this.setState({destination_cca2: data[0]})
-    this.updatePorts("destination_cca2", data[0])
+      alert("Error: " + response.status + ". " + JSON.stringify(data))
 
+    }
+
+  
   }
 
   /*
@@ -159,7 +165,7 @@ class FlightOverview extends Component {
     if (response.status === 200) {
       this.setState({flights: data})
     } else {
-      alert("Error: " + response.status)
+      alert("Error: " + response.status + ". " + JSON.stringify(data))
     }
   }
 
