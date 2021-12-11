@@ -1,7 +1,7 @@
 const { ObjectId } = require('bson');
 const express = require('express');
 const { check, validationResult, matchedData } = require('express-validator');
-const { authRequired, adminRequired, createPasswordHash, checkPwnedPassword } = require('../auth')
+const { authRequired, adminRequired, createPasswordHash, checkPassword, encode, decode } = require('../auth')
 const database = require('../mongo')
 const mail = require('../mail')
 
@@ -50,7 +50,7 @@ router.get('/', authRequired, (req, res) => {
     users.findOne({ email: req.user.email }).then(value => {
         delete value.password
         delete value.admin
-        let x = value.credit_card.replace(/ /g, '')
+        let x = decode(value.credit_card).replace(/ /g, '')
         value.credit_card = x.substring(0, 2) + '** **** **** **' + x.substring(14, 16)
         res.send(value)
     }).catch(() => {
@@ -82,7 +82,8 @@ router.patch('/', authRequired, [
     check('username').optional().isString().withMessage("Invalid username"),
     check('email').optional().isEmail().withMessage("Invalid email"),
     check('phone').optional().isMobilePhone().withMessage("Invalid phone"),
-    check('credit_card').optional().isCreditCard().withMessage("Invalid CC")
+    check('credit_card').optional().isCreditCard().customSanitizer(encode).withMessage("Invalid CC"),
+    check('password').optional().custom(checkPassword).customSanitizer(createPasswordHash)
 ], (req, res) => {
     const valid = validationResult(req)
     if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
@@ -91,17 +92,12 @@ router.patch('/', authRequired, [
         promises = []
 
         promises.push(new Promise((resolve, reject) => {
-            if (req.body.password) {
-                checkPwnedPassword(req.body.password).then(pwned => {
-                    if (pwned) reject("This password is PWNED! Check done by https://haveibeenpwned.com.")
+            if (matchedData(req).password) {
+                passwordVerifications.insertOne({ password: matchedData(req).password, email: req.user.email }, (err, result) => {
+                    if (err) reject("Failed sending Mail")
                     else {
-                        passwordVerifications.insertOne({ password: createPasswordHash(req.body.password), email: req.user.email }, (err, result) => {
-                            if (err) reject("Failed sending Mail")
-                            else {
-                                mail.sendMail(req.user.email, 'Password Verification', `http://${config.host}/api/user/updatePassword/${result.insertedId.toString()}`)
-                                resolve("Apply new password by clicking the verification-link sent to your E-Mail.")
-                            }
-                        })
+                        mail.sendMail(req.user.email, 'Password Verification', `http://${config.host}/api/user/updatePassword/${result.insertedId.toString()}`)
+                        resolve("Apply new password by clicking the verification-link sent to your E-Mail.")
                     }
                 })
             }
@@ -128,13 +124,14 @@ router.post('/create', authRequired, adminRequired, [
     check('username').notEmpty().isString().withMessage("Invalid username"),
     check('email').notEmpty().isEmail().withMessage("Invalid email"),
     check('phone').notEmpty().isMobilePhone().withMessage("Invalid phone"),
-    check('credit_card').notEmpty().isCreditCard().withMessage("Invalid CC"),
-    check('admin').notEmpty().isBoolean().withMessage("Invalid admin parameter")
+    check('credit_card').notEmpty().isCreditCard().customSanitizer(encode).withMessage("Invalid CC"),
+    check('admin').notEmpty().isBoolean().withMessage("Invalid admin parameter"),
+    check('password').notEmpty().custom(checkPassword).customSanitizer(createPasswordHash)
 ], (req, res) => {
     const valid = validationResult(req)
     if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
     else {
-        users.insertOne({ ...matchedData(req), password: createPasswordHash(req.body.password) }).then(() => {
+        users.insertOne(matchedData(req)).then(() => {
             res.sendStatus(201)
         }).catch(() => {
             res.sendStatus(500)
@@ -149,7 +146,6 @@ router.post('/read', authRequired, adminRequired, [
     check('username').optional().isString().withMessage("Invalid username"),
     check('email').optional().isEmail().withMessage("Invalid email"),
     check('phone').optional().isMobilePhone().withMessage("Invalid phone"),
-    check('credit_card').optional().isCreditCard().withMessage("Invalid CC"),
     check('admin').optional().isBoolean().withMessage("Invalid admin parameter")
 ], (req, res) => {
     const valid = validationResult(req)
@@ -170,14 +166,13 @@ router.post('/update', authRequired, adminRequired, [
     check('find.username').optional().isString().withMessage("Invalid Username Format In Find"),
     check('find.email').optional().isEmail().withMessage("Invalid Email Format In Find"),
     check('find.phone').optional().isMobilePhone().withMessage("Invalid Phone Format In Find"),
-    check('find.credit_card').optional().isCreditCard().withMessage("Invalid CC Format In Find"),
     check('find.admin').optional().isBoolean().withMessage("Invalid Admin Format In Find"),
     check('update.first_name').optional().isAlpha().withMessage("Invalid Firstname Format In Update"),
     check('update.last_name').optional().isAlpha().withMessage("Invalid Lastname Format In Update"),
     check('update.username').optional().isString().withMessage("Invalid Username In Update"),
     check('update.email').optional().isEmail().withMessage("Invalid Email Format In Update"),
     check('update.phone').optional().isMobilePhone().withMessage("Invalid Phone Format In Update"),
-    check('update.credit_card').optional().isCreditCard().withMessage("Invalid CC Format In Update"),
+    check('update.credit_card').optional().isCreditCard().customSanitizer(encode).withMessage("Invalid CC Format In Update"),
     check('update.admin').optional().isBoolean().withMessage("Invalid Admin parameter In Update")
 ], (req, res) => {
     const valid = validationResult(req)
@@ -196,8 +191,7 @@ router.post('/delete', authRequired, adminRequired, [
     check('last_name').optional().isAlpha().withMessage("Invalid lastname"),
     check('username').optional().isString().withMessage("Invalid username"),
     check('email').optional().isEmail().withMessage("Invalid email"),
-    check('phone').optional().isMobilePhone().withMessage("Invalid phone"),
-    check('credit_card').optional().isCreditCard().withMessage("Invalid CC")
+    check('phone').optional().isMobilePhone().withMessage("Invalid phone")
 ], (req, res) => {
     users.findOneAndDelete(req.body).then(v => {
         if (!v) res.sendStatus(404)

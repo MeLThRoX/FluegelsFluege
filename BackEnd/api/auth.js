@@ -55,53 +55,58 @@ router.post('/register', [
     check('username').notEmpty().isString().withMessage("Invalid username"),
     check('email').notEmpty().isEmail().withMessage("Invalid email"),
     check('phone').notEmpty().isMobilePhone().withMessage("Invalid phone"),
-    check('credit_card').notEmpty().isCreditCard().withMessage("Invalid CC")
+    check('credit_card').notEmpty().isCreditCard().customSanitizer(encode).withMessage("Invalid CC"),
+    check('password').notEmpty().custom(checkPassword).customSanitizer(createPasswordHash)
 ], (req, res) => {
     const valid = validationResult(req)
     if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
     else {
-        checkPwnedPassword(req.body.password).then(pwned => {
-            if (pwned) res.status(400).send("This password is PWNED! Check done by https://haveibeenpwned.com.")
-            else {
-                password = createPasswordHash(req.body.password)
-
-                users.insertOne({ ...matchedData(req), password, admin: false }).then(() => {
-                    const { first_name, last_name, username, email } = matchedData(req)
-                    const token = jwt.sign({ first_name, last_name, username, email }, config.jsonwebtoken)
-                    res.cookie('jwt', token).sendStatus(201)
-                }).catch(error => {
-                    if (error.code == 11000) res.status(400).send(Object.keys(error.keyValue)[0] + " is already in use.")
-                    else res.sendStatus(400)
-                })
-            }
+        users.insertOne({ ...matchedData(req), admin: false }).then(() => {
+            const { first_name, last_name, username, email } = matchedData(req)
+            const token = jwt.sign({ first_name, last_name, username, email }, config.jsonwebtoken)
+            res.cookie('jwt', token).sendStatus(201)
+        }).catch(error => {
+            if (error.code == 11000) res.status(400).send(Object.keys(error.keyValue)[0] + " is already in use.")
+            else res.sendStatus(400)
         })
     }
 })
 
 router.post('/reset_password', [
-    check('email').notEmpty().isEmail().withMessage("Invalid Email Format")
+    check('email').notEmpty().isEmail().withMessage("Invalid Email Format"),
+    check('password').notEmpty().custom(checkPassword).customSanitizer(createPasswordHash)
 ], (req, res) => {
     const valid = validationResult(req)
     if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
     else {
-        checkPwnedPassword(req.body.password).then(pwned => {
-            if (pwned) res.status(400).send("This password is PWNED! Check done by https://haveibeenpwned.com.")
-            else {
-                users.findOne({ email: matchedData(req).email }, (err, userResult) => {
-                    if (userResult) {
-                        passwordVerifications.insertOne({ password: createPasswordHash(req.body.password), email: matchedData(req).email }, (err, result) => {
-                            if (!err) {
-                                console.log("Sent")
-                                mail.sendMail(matchedData(req).email, 'Password Verification', `http://${config.host}/api/user/updatePassword/${result.insertedId.toString()}`)
-                            }
-                        })
+        const { email, password } = matchedData(req)
+        users.findOne({ email }, (err, userResult) => {
+            if (userResult) {
+                passwordVerifications.insertOne({ password, email }, (err, result) => {
+                    if (!err) {
+                        mail.sendMail(email, 'Password Verification', `http://${config.host}/api/user/updatePassword/${result.insertedId.toString()}`)
                     }
-                    res.send("if this user exists a verification link was sent by email.")
                 })
             }
+            res.send("if this user exists a verification link was sent by email.")
         })
     }
 })
+
+router.get('/test/:text', (req, res) => {
+    const encoded = encode(req.params.text)
+    const decoded = decode(encoded)
+    res.send([encoded, decoded])
+})
+
+function checkPassword(password) {
+    return new Promise((resolve, reject) => {
+        checkPwnedPassword(password).then(pwned => {
+            if (pwned) reject("This password is PWNED! Check done by https://haveibeenpwned.com.")
+            else resolve()
+        })
+    })
+}
 
 async function checkPwnedPassword(password) {
     const hash = crypto.createHash('sha1').update(password).digest('hex').toUpperCase()
@@ -117,6 +122,23 @@ async function checkPwnedPassword(password) {
 
 function createPasswordHash(password) {
     return crypto.scryptSync(password, config.password_salt, 64).toString('hex')
+}
+
+const iv = Buffer.from("ajerbvaeiourbvau", 'utf8');
+
+function encode(string) {
+    var cipher = crypto.createCipheriv('aes-256-cbc', config.encryption_key, iv);
+    var part1 = cipher.update(string, 'utf8');
+    var part2 = cipher.final();
+    const encrypted = Buffer.concat([part1, part2]).toString('base64');
+    return encrypted;
+}
+
+function decode(string) {
+    var decipher = crypto.createDecipheriv('aes-256-cbc', config.encryption_key, iv);
+    var decrypted = decipher.update(string, 'base64', 'utf8');
+    decrypted += decipher.final();
+    return decrypted;
 }
 
 function authRequired(req, res, next) {
@@ -149,4 +171,4 @@ function adminRequired(req, res, next) {
     })
 }
 
-module.exports = { router, authRequired, adminRequired, createPasswordHash, checkPwnedPassword }
+module.exports = { router, authRequired, adminRequired, createPasswordHash, checkPassword, encode, decode }
