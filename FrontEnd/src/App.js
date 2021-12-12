@@ -78,7 +78,18 @@ class App extends React.Component {
 
   }
 
+  
+  
+
   render() { 
+    
+    //clear the jwt token, when the browser window is closed
+    window.onbeforeunload = () => {
+      
+      document.cookie = "jwt="
+
+    };
+    
     return( 
       <>
       
@@ -95,7 +106,6 @@ class App extends React.Component {
             clickHandlerLoggout = {this.logOut}
           />
         </div>
- 
 
         <div className="wrapper" style={{margin: 15}}>
           {React.createElement(

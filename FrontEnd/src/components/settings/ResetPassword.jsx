@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Recaptcha from 'react-recaptcha';
 import '../../styles/Wrapper.css'
 
 class resetInterface extends Component {
@@ -10,6 +11,8 @@ class resetInterface extends Component {
             newPasswordCheck: ""
          }
 
+         this.captcha = null;
+
          this.handleChange = this.handleChange.bind(this);
          this.setNewPassword = this.setNewPassword.bind(this);
 
@@ -19,13 +22,14 @@ class resetInterface extends Component {
         this.setState({...this.state, [e.target.name]: e.target.value})
     }
 
-    async setNewPassword() {
+    async setNewPassword(token) {
 
         if (this.state.newPassword === this.state.newPasswordCheck) {
 
             let toSubmit = {
                 "email": this.state.email,
-                "password": this.state.newPassword
+                "password": this.state.newPassword,
+                "recaptcha": token
             }
 
             const response = await fetch('/api/reset_password', {
@@ -86,7 +90,15 @@ class resetInterface extends Component {
                     onChange={this.handleChange}
                 />
             </div> 
-            <button onClick={() => this.setNewPassword()}>Neues Passwort setzen</button>
+            <button onClick={() => this.captcha.execute()}>Neues Passwort setzen</button>
+
+            <Recaptcha
+                ref={e => this.captcha = e}
+                sitekey="6LeoFpcdAAAAAEOiHWSsJmnOxx5i-nKfo8SXccG3"
+                size="invisible"
+                verifyCallback={this.setNewPassword}
+            />
+
         </div>
          );
     }
