@@ -45,7 +45,8 @@ class CreateUser extends Component {
                         "password": this.state.password,
                         "phone": this.state.phone,
                         "credit_card": this.state.credit_card,
-                        "recaptcha": token
+                        "recaptcha": token,
+                        "agb": this.state.checked
                     }
                     
                     const resp = await fetch('/api/register', {
