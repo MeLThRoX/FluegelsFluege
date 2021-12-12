@@ -62,6 +62,7 @@ router.post('/register', [
     check('email').notEmpty().isEmail().withMessage("Invalid email"),
     check('phone').notEmpty().isMobilePhone().withMessage("Invalid phone"),
     check('credit_card').notEmpty().isCreditCard().customSanitizer(encode).withMessage("Invalid CC"),
+    check('agb').notEmpty().isBoolean().toBoolean().withMessage("Wrong AGB Format"),
     check('password').notEmpty().custom(checkPassword).customSanitizer(createPasswordHash)
 ], (req, res) => {
     if (checkRecaptcha(req.body.recaptcha) === false) {
