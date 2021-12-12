@@ -18,6 +18,8 @@ class SettingsUser extends Component {
             credit_card: "",
             booked_flights: [],
 
+            numberChanged: false,
+
             flightIDtoSearch: "",
             flightsOverview: []
         }
@@ -33,6 +35,11 @@ class SettingsUser extends Component {
     Wird von Eingabefeldern direkt in State gespeichert.
     */
     handleChange(e) {
+
+        if(e.target.name === "credit_card"){
+            this.setState({credit_card: true})
+        }
+
         this.setState({...this.state, [e.target.name]: e.target.value})
     }
 
@@ -52,7 +59,6 @@ class SettingsUser extends Component {
 
         if (response.status === 200 || response.status === 304) {
             
-
             this.setState({first_name: data.first_name})
             this.setState({last_name: data.last_name})
             this.setState({username: data.username})
@@ -92,11 +98,11 @@ class SettingsUser extends Component {
                 "last_name": this.state.last_name,
                 "username": this.state.username,
                 "email": this.state.email,
-                "phone": this.state.phone,
-                "credit_card": this.state.credit_card
+                "phone": this.state.phone
                 }
 
-            if (this.state.password != "") toSubmit["password"] = this.state.password;
+            if (this.state.numberChanged) toSubmit["credit_card"] = this.state.credit_card;
+            if (this.state.password !== "") toSubmit["password"] = this.state.password;
 
             alert(JSON.stringify(toSubmit))
 
@@ -121,7 +127,7 @@ class SettingsUser extends Component {
 
     async createOverviewFlight() {
 
-        if (this.state.flightIDtoSearch != "") {
+        if (this.state.flightIDtoSearch !== "") {
 
             const toSearch = {
                 "_id": this.state.flightIDtoSearch
@@ -135,7 +141,7 @@ class SettingsUser extends Component {
         
             const data = await response.json()
 
-            if ( response.status = 200) {
+            if ( response.status === 200) {
                 this.setState({flightsOverview: data})
             } else {
                 alert("Error: " + response.status + ". " + JSON.stringify(data))

@@ -208,7 +208,7 @@ class FlightOverview extends Component {
 
     let portListOrigin = (this.state.port_start.length > 0 &&
       port_start.map((item, i) => {
-        if (item.iata != "" && item.name != ""){
+        if (item.iata !== "" && item.name !== ""){
           return (
             <option key={i} value={item.iata}>{item.name}</option>
           )
@@ -217,7 +217,7 @@ class FlightOverview extends Component {
     
     let portListDest = (this.state.port_dest.length > 0 &&
       port_dest.map((item, i) => {
-        if (item.iata != "" && item.name != ""){
+        if (item.iata !== "" && item.name !== ""){
           return (
             <option key={i} value={item.iata}>{item.name}</option>
           )
@@ -226,7 +226,7 @@ class FlightOverview extends Component {
     
 
     return (
-      <div style={{textAlign: "center"}}>
+      <div className='wrapper' style={{textAlign: "center"}}>
         <div>
           <div>
             In welchem Land wollen Sie starten:

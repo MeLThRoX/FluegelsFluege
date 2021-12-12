@@ -19,12 +19,28 @@ class resetInterface extends Component {
         this.setState({...this.state, [e.target.name]: e.target.value})
     }
 
-    setNewPassword() {
+    async setNewPassword() {
 
         if (this.state.newPassword === this.state.newPasswordCheck) {
 
-            //submit
-            alert("Ihre eingegeben Passwörter stimmen nicht überein")
+            let toSubmit = {
+                "email": this.state.email,
+                "password": this.state.newPassword
+            }
+
+            const response = await fetch('/api/reset_password', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
+            body: JSON.stringify(toSubmit)
+            })
+    
+            let data = await response.text()
+        
+            if (response.status === 200) {
+                alert("Bitte folgen Sie den Anweisungen in der Email, die Sie gleich erhalten werden.")
+            } else {
+                alert("Error Code: " + response.status + ". " + data)
+            }
 
         } else {
             alert("Ihre eingegeben Passwörter stimmen nicht überein")

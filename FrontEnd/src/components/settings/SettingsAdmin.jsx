@@ -4,8 +4,6 @@ import BasicTableNoSelectUser from '../tables/basicTableNoSelectUser';
 import BasicTableShowFlights from '../tables/basicTableShowFlights';
 import DatePicker from 'react-datepicker';
 
-
-
 class SettingsAdmin extends Component {
     constructor(props) {
         super(props);
@@ -106,10 +104,10 @@ class SettingsAdmin extends Component {
             "update": {}
         }
 
-        if (this.state.inputEditOrigin != "") editFlightDate.update["orig"] = this.state.inputEditOrigin;
-        if (this.state.inputEditDestination != "") editFlightDate.update["dest"] = this.state.inputEditDestination;
-        if (this.state.inputEditTime != "") editFlightDate.update["time"] = this.state.inputEditTime;
-        if (this.state.inputEditSeats != "") editFlightDate.update["seats"] = this.state.inputEditSeats;
+        if (this.state.inputEditOrigin !== "") editFlightDate.update["orig"] = this.state.inputEditOrigin;
+        if (this.state.inputEditDestination !== "") editFlightDate.update["dest"] = this.state.inputEditDestination;
+        if (this.state.inputEditTime !== "") editFlightDate.update["time"] = this.state.inputEditTime;
+        if (this.state.inputEditSeats !== "") editFlightDate.update["seats"] = this.state.inputEditSeats;
 
         const response = await fetch('/api/flights/update', {
         method: 'POST',
@@ -163,9 +161,9 @@ class SettingsAdmin extends Component {
 
         const toSearch ={}
         
-        if (this.state.inputSearchNameFirst != "") toSearch["first_name"] = this.state.inputSearchNameFirst;
-        if (this.state.inputSearchNameLast != "") toSearch["last_name"] = this.state.inputSearchNameLast;
-        if (this.state.inputSearchNameUser != "") toSearch["username"] = this.state.inputSearchNameUser;
+        if (this.state.inputSearchNameFirst !== "") toSearch["first_name"] = this.state.inputSearchNameFirst;
+        if (this.state.inputSearchNameLast !== "") toSearch["last_name"] = this.state.inputSearchNameLast;
+        if (this.state.inputSearchNameUser !== "") toSearch["username"] = this.state.inputSearchNameUser;
 
         const response = await fetch('/api/user/read', {
         method: 'POST',
@@ -215,7 +213,7 @@ class SettingsAdmin extends Component {
     async createOverviewFlight() {
         
         
-        if (this.state.inputSearchFlightID != "") {
+        if (this.state.inputSearchFlightID !== "") {
 
             const toSearch = {
                 "_id": this.state.inputSearchFlightID
@@ -261,7 +259,7 @@ class SettingsAdmin extends Component {
                 Neuen Flug erstellen
                 <div>
                     <input 
-                        style={{marginLeft: '20%',width: '60%'}} 
+                        style={{width: '60%'}} 
                         type="text" 
                         name='inputCreateOrigin'
                         placeholder="Origin" 
@@ -271,7 +269,7 @@ class SettingsAdmin extends Component {
                 </div>  
                 <div>
                     <input 
-                        style={{marginLeft: '20%',width: '60%'}} 
+                        style={{width: '60%'}} 
                         type="text" 
                         placeholder="Destination" 
                         name ='inputCreateDestination'
@@ -281,7 +279,7 @@ class SettingsAdmin extends Component {
                 </div> 
                 <div>
                     <input 
-                        style={{marginLeft: '20%',width: '60%'}} 
+                        style={{width: '60%'}} 
                         type="text" 
                         placeholder="Time" 
                         name ='inputCreateTime'
@@ -291,7 +289,7 @@ class SettingsAdmin extends Component {
                 </div> 
                 <div>
                     <input 
-                        style={{marginLeft: '20%',width: '60%'}} 
+                        style={{width: '60%'}} 
                         type="text" 
                         placeholder="Seats" 
                         name ='inputCreateSeats'
@@ -301,7 +299,7 @@ class SettingsAdmin extends Component {
                 </div> 
                 <div>
                     <input 
-                        style={{marginLeft: '20%',width: '60%'}} 
+                        style={{width: '60%'}} 
                         type="text" 
                         placeholder="Price" 
                         name ='inputCreatePrice'
@@ -315,7 +313,7 @@ class SettingsAdmin extends Component {
                 Flug bearbeiten
                 <div style={{margin: 10}}>
                     <input 
-                        style={{marginLeft: '20%',width: '60%'}} 
+                        style={{width: '60%'}} 
                         type="text" 
                         placeholder="ID" 
                         name ='inputEditID'
@@ -329,7 +327,7 @@ class SettingsAdmin extends Component {
                 (Felder leer lassen, wenn diese nicht geändert werden sollen)
                 <div>
                     <input 
-                        style={{marginLeft: '20%',width: '60%'}} 
+                        style={{width: '60%'}} 
                         type="text" 
                         placeholder="Origin" 
                         name ='inputEditOrigin'
@@ -339,7 +337,7 @@ class SettingsAdmin extends Component {
                 </div>  
                 <div>
                     <input 
-                        style={{marginLeft: '20%',width: '60%'}} 
+                        style={{width: '60%'}} 
                         type="text" 
                         placeholder="Destination" 
                         name ='inputEditDestination'
@@ -349,7 +347,7 @@ class SettingsAdmin extends Component {
                 </div> 
                 <div>
                     <input 
-                        style={{marginLeft: '20%',width: '60%'}} 
+                        style={{width: '60%'}} 
                         type="text" 
                         placeholder="Seats" 
                         name ='inputEditSeats'
@@ -358,7 +356,7 @@ class SettingsAdmin extends Component {
                     />
                 </div>
                 <DatePicker
-                    style={{marginLeft: '20%',width: '60%'}} 
+                    style={{width: '60%'}} 
                     selected={this.state.inputEditTime}
                     onChange={(date) => this.handleChangeStartDate(date)}
                     showTimeSelect
@@ -376,7 +374,7 @@ class SettingsAdmin extends Component {
                 Flug löschen 
                 <div>
                     <input 
-                        style={{marginLeft: '20%',width: '60%'}} 
+                        style={{width: '60%'}} 
                         type="text" 
                         placeholder="ID to delete" 
                         name ='inputDeleteID'
@@ -390,7 +388,7 @@ class SettingsAdmin extends Component {
                 Infos über User per Vorname und Nachname. Gibt ID zurück
                 <div>
                     <input 
-                        style={{marginLeft: '20%',width: '60%'}} 
+                        style={{width: '60%'}} 
                         type="text" 
                         placeholder="Search firstname" 
                         name ='inputSearchNameFirst'
@@ -400,7 +398,7 @@ class SettingsAdmin extends Component {
                 </div> 
                 <div>
                     <input 
-                        style={{marginLeft: '20%',width: '60%'}} 
+                        style={{width: '60%'}} 
                         type="text" 
                         placeholder="Search lastname" 
                         name ='inputSearchNameLast'
@@ -410,7 +408,7 @@ class SettingsAdmin extends Component {
                 </div> 
                 <div>
                     <input 
-                        style={{marginLeft: '20%',width: '60%'}} 
+                        style={{width: '60%'}} 
                         type="text" 
                         placeholder="Search Username" 
                         name ='inputSearchNameUser'
@@ -426,7 +424,7 @@ class SettingsAdmin extends Component {
                 Übersicht zu Flügen pro User (input user-id). Falls keine ID eingeben wird, werden alle Flüge ausgegeben.
                 <div>
                     <input 
-                        style={{marginLeft: '20%',width: '60%'}} 
+                        style={{width: '60%'}} 
                         type="text" 
                         placeholder="ID des User" 
                         name ='inputSearchFlightUID'
@@ -441,7 +439,7 @@ class SettingsAdmin extends Component {
                 Übersicht zu Flügen pro ID. Wenn Sie eine ID eingeben, werden Daten zu diesem Flug angezeigt. Lassen Sie das Feld leer, werden alle Flüge angezeigt.
                 <div>
                     <input 
-                        style={{marginLeft: '20%',width: '60%'}} 
+                        style={{width: '60%'}} 
                         type="text" 
                         placeholder="ID des Flugs" 
                         name ='inputSearchFlightID'

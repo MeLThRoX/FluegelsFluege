@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import '../../styles/Wrapper.css'
+
 class AGB extends Component {
     constructor(props) {
         super(props);
@@ -8,12 +10,12 @@ class AGB extends Component {
     render() { 
         return ( 
             <>
-            <div>
+            <div style={{textAlign: 'left', width: 1000, margin: 10}}>
                 Hier sollen alle wichtigen Informationen bezüglich AGB und Datenschutz stehen. Ich bin aber leider kein Anwalt und Beispiele für
                 so eine spezifische Anwendung zu finden ist nicht einfach. Ja, man könnte zu einer Seite wie booking.com gehen und da einfach die 
                 AGB rauskopieren, das bringt aber auch nicht viel. Schließlich muss die AGB auf die Firma/Website angepasst werden.
             </div>
-            <div>
+            <div style={{textAlign: 'left', width: 1000}}>
                 In unseren AGB sollten unter anderem folgende Punkte abgedeckt sein:
                 <ul>
                     <li>Welche Daten werden erfasst</li>

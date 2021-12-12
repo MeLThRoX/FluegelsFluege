@@ -80,19 +80,24 @@ class App extends React.Component {
 
   render() { 
     return( 
-    <Fragment>
-      <div className="app-bar" style={{ font: 'bold'}}>
-        <h1 className="app-bar-title">Flügels Flüge</h1>
-        <h4 className="app-bar-title-low">Wir haltens simpel</h4>
-      </div>
-      <section className="app-section container">
-        <Content 
-          clickHandler = {this.onButtonClicked} 
-          clickHandlerSettings = {this.handleSettings}
-          clickHandlerLogin = {this.handleLogin}
-          clickHandlerLoggout = {this.logOut}
-        />
-        <div className="chosen-Page" style={{margin: 15}}>
+      <>
+      
+        <title>FluegelsFluege</title>
+        <div className="app-bar" style={{ font: 'bold'}}>
+          <h1 className="app-bar-title">Flügels Flüge</h1>
+          <h4 className="app-bar-title-low">Wir haltens simpel</h4>
+        </div>
+        <div className="app-section container">
+          <Content 
+            clickHandler = {this.onButtonClicked} 
+            clickHandlerSettings = {this.handleSettings}
+            clickHandlerLogin = {this.handleLogin}
+            clickHandlerLoggout = {this.logOut}
+          />
+        </div>
+ 
+
+        <div className="wrapper" style={{margin: 15}}>
           {React.createElement(
             this.state.primePage, {
               checkLogin: this.isLoggedIn,
@@ -103,8 +108,8 @@ class App extends React.Component {
               passengerCount: this.state.countPassengers
               })}
         </div>
-      </section>
-    </Fragment>
+
+    </>
 
   )}
 }

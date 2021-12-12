@@ -16,6 +16,10 @@ let loginAttempts = []
 router.post('/login', [
     check('username').notEmpty().isString()
 ], (req, res) => {
+
+    res.send(checkRecaptcha(req.body.recaptcha))
+    return
+
     if (checkRecaptcha(req.body.recaptcha) === false) {
         res.status(400).send("Verify ReCaptcha")
         return

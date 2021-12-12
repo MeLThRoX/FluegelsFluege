@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import '../../styles/Wrapper.css'
+
 class Impressum extends Component {
     constructor(props) {
         super(props);
@@ -8,7 +10,7 @@ class Impressum extends Component {
     render() { 
         return ( 
             <>
-            <div>
+            <div style={{textAlign: 'left', width: 1000, margin: 10}}>
                 <p>
                     Angaben gem. § 5 TMG:
                     <br/>
@@ -26,13 +28,11 @@ class Impressum extends Component {
                     <br/>
                     Email: service@fluegelsfluege.de
                 </p>
-            </div>
-            <div>
+                <p>
                 Hier müssten jetzt noch Sachen wie Urheberrecht und Haftungsausschluss behandelt werden, davon habe ich aber keine Ahnung.
                 Ich denke im Rahmen dieses Projektes ist eine Andeutung an dieser Stelle ausreichend.
+                </p>
             </div>
-
-
             </>
          );
     }
