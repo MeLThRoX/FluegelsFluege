@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Recaptcha from 'react-recaptcha';
 import '../../styles/Wrapper.css'
 
 class resetInterface extends Component {

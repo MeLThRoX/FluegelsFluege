@@ -16,14 +16,12 @@ class CreateUser extends Component {
             password_check: "",
             phone: "",
             credit_card: "",
-            isVerified: false,
             checked: false
          }
 
          this.captcha = null;
 
          this.handleChange = this.handleChange.bind(this);
-         this.verifyCaptcha = this.verifyCaptcha.bind(this);
          this.startRegistration = this.startRegistration.bind(this);
          this.handleCheckbox = this.handleCheckbox.bind(this);
     }
@@ -34,51 +32,42 @@ class CreateUser extends Component {
     Eingabevalidierung auf Seiten des Backend.
     */
     async startRegistration(token) {
-        if (this.state.isVerified) {
-            if (this.state.checked) {
-                if (this.state.password === this.state.password_check) {
-                    const toSubmit = {
-                        "first_name": this.state.first_name,
-                        "last_name": this.state.last_name,
-                        "username": this.state.username,
-                        "email": this.state.email,
-                        "password": this.state.password,
-                        "phone": this.state.phone,
-                        "credit_card": this.state.credit_card,
-                        "recaptcha": token,
-                        "agb": this.state.checked
-                    }
-                    
-                    const resp = await fetch('/api/register', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
-                    body: JSON.stringify(toSubmit)
-                    })
 
-                    let data = await resp.text();
-                    
-                    if( data === "Created"){
-                        alert("Benutzer wurde erstellt")
-                        this.props.setPage("",startScreen)
-                    } else {
-                        alert("Error: " + resp.status + ". " + data)
-                    }
+        if (this.state.checked) {
+            if (this.state.password === this.state.password_check) {
+                const toSubmit = {
+                    "first_name": this.state.first_name,
+                    "last_name": this.state.last_name,
+                    "username": this.state.username,
+                    "email": this.state.email,
+                    "password": this.state.password,
+                    "phone": this.state.phone,
+                    "credit_card": this.state.credit_card,
+                    "recaptcha": token,
+                    "agb": this.state.checked
+                }
+                
+                const resp = await fetch('/api/register', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
+                body: JSON.stringify(toSubmit)
+                })
+
+                let data = await resp.text();
+                
+                if( data === "Created"){
+                    alert("Benutzer wurde erstellt")
+                    this.props.setPage("",startScreen)
                 } else {
-                    alert("Ihre Passwörter stimmen nicht überein!")
+                    alert("Error: " + resp.status + ". " + data)
                 }
             } else {
-                alert("Bitte AGB aktzeptieren!")
+                alert("Ihre Passwörter stimmen nicht überein!")
             }
-        }else {
-            alert("Bitte Captcha durchführen!")
+        } else {
+            alert("Bitte AGB aktzeptieren!")
         }
-    }
-
-    /*
-    Methode zum Erfassen, ob Captcha erfolgreich durchgeführt wurde.
-    */
-    verifyCaptcha() {
-        this.setState({isVerified: true})
+ 
     }
 
     /*
@@ -178,9 +167,9 @@ class CreateUser extends Component {
             <label>
                 {"Ich habe die AGB gelesen und aktzeptiert  "}
                 <input
-                type="checkbox"
-                checked={this.state.checked}
-                onChange={() => this.handleCheckbox()}
+                    type="checkbox"
+                    checked={this.state.checked}
+                    onChange={() => this.handleCheckbox()}
                 />
             </label>
 
