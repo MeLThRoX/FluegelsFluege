@@ -19,6 +19,9 @@ class CreateUser extends Component {
             isVerified: false,
             checked: false
          }
+
+         this.captcha = null;
+
          this.handleChange = this.handleChange.bind(this);
          this.verifyCaptcha = this.verifyCaptcha.bind(this);
          this.startRegistration = this.startRegistration.bind(this);
@@ -30,18 +33,19 @@ class CreateUser extends Component {
     Usereingaben aus State werden, wenn AGB aktzeptiert und Captcha durchgeführt, an API geschickt.
     Eingabevalidierung auf Seiten des Backend.
     */
-    async startRegistration() {
+    async startRegistration(token) {
         if (this.state.isVerified) {
             if (this.state.checked) {
                 if (this.state.password === this.state.password_check) {
                     const toSubmit = {
-                    "first_name": this.state.first_name,
-                    "last_name": this.state.last_name,
-                    "username": this.state.username,
-                    "email": this.state.email,
-                    "password": this.state.password,
-                    "phone": this.state.phone,
-                    "credit_card": this.state.credit_card
+                        "first_name": this.state.first_name,
+                        "last_name": this.state.last_name,
+                        "username": this.state.username,
+                        "email": this.state.email,
+                        "password": this.state.password,
+                        "phone": this.state.phone,
+                        "credit_card": this.state.credit_card,
+                        "recaptcha": token
                     }
                     
                     const resp = await fetch('/api/register', {
@@ -180,10 +184,10 @@ class CreateUser extends Component {
             </label>
 
             <Recaptcha
-                sitekey="6LeTBkkdAAAAADLu8NW6AZXaGF2CfhXMxgviRX0U"
-                render="explicit"
-                onloadCallback={this.captchaLoaded}
-                verifyCallback={this.verifyCaptcha}
+                ref={e => this.captcha = e}
+                sitekey="6LeoFpcdAAAAAEOiHWSsJmnOxx5i-nKfo8SXccG3"
+                size="invisible"
+                verifyCallback={() => this.captcha.execute()}
             />
 
             <button onClick={this.startRegistration}>Registrieren</button>
