@@ -5,7 +5,7 @@ const { check, validationResult, matchedData } = require('express-validator');
 const fetch = require("node-fetch")
 const log = require('./log')
 const database = require('./mongo')
-const mail = require('./mail')
+const mail = require('./mail');
 
 const router = express.Router();
 const users = database.collection("users")
@@ -14,17 +14,9 @@ const passwordVerifications = database.collection("password-verifications")
 let loginAttempts = []
 
 router.post('/login', [
-    check('username').notEmpty().isString()
+    check('username').notEmpty().isString(),
+    check('recaptcha').notEmpty().custom(checkRecaptcha)
 ], (req, res) => {
-
-    res.send(checkRecaptcha(req.body.recaptcha))
-    return
-
-    if (checkRecaptcha(req.body.recaptcha) === false) {
-        res.status(400).send("Verify ReCaptcha")
-        return
-    }
-
     if (!loginAttempts[req.connection.remoteAddress]) loginAttempts[req.connection.remoteAddress] = { count: 0 }
     if (loginAttempts[req.connection.remoteAddress].count >= 3) {
         if (new Date() - loginAttempts[req.connection.remoteAddress].lastFailure > 5000)
@@ -37,7 +29,7 @@ router.post('/login', [
     }
 
     const valid = validationResult(req)
-    if (!valid.isEmpty()) res.status(400).send("Format error")
+    if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
     else {
         let { username, password } = req.body
         password = createPasswordHash(password)
@@ -67,13 +59,9 @@ router.post('/register', [
     check('phone').notEmpty().isMobilePhone().withMessage("Invalid phone"),
     check('credit_card').notEmpty().isCreditCard().customSanitizer(encode).withMessage("Invalid CC"),
     check('agb').notEmpty().isBoolean().toBoolean().withMessage("Wrong AGB Format"),
-    check('password').notEmpty().custom(checkPassword).customSanitizer(createPasswordHash)
+    check('password').notEmpty().custom(checkPassword).customSanitizer(createPasswordHash),
+    check('recaptcha').notEmpty().custom(checkRecaptcha)
 ], (req, res) => {
-    if (checkRecaptcha(req.body.recaptcha) === false) {
-        res.status(400).send("Verify ReCaptcha")
-        return
-    }
-
     const valid = validationResult(req)
     if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
     else {
@@ -90,13 +78,9 @@ router.post('/register', [
 
 router.post('/reset_password', [
     check('email').notEmpty().isEmail().withMessage("Invalid Email Format"),
-    check('password').notEmpty().custom(checkPassword).customSanitizer(createPasswordHash)
+    check('password').notEmpty().custom(checkPassword).customSanitizer(createPasswordHash),
+    check('recaptcha').notEmpty().custom(checkRecaptcha)
 ], (req, res) => {
-    if (checkRecaptcha(req.body.recaptcha) === false) {
-        res.status(400).send("Verify ReCaptcha")
-        return
-    }
-    
     const valid = validationResult(req)
     if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
     else {
@@ -115,15 +99,14 @@ router.post('/reset_password', [
 })
 
 async function checkRecaptcha(response) {
+    console.log(`secret=${config.recaptcha_secret}&response=${response}`)
     const res = await fetch("https://www.google.com/recaptcha/api/siteverify", {
         method: "POST",
-        body: JSON.stringify({
-            secret: "6LeoFpcdAAAAAEm4vD0bO-buE3sibjv5vAWrNUw4",
-            response
-        })
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `secret=${config.recaptcha_secret}&response=${response}`
     })
     const data = await res.json()
-    return data.success
+    return data["success"] ? Promise.resolve() : Promise.reject(data['error-codes'])
 }
 
 function checkPassword(password) {

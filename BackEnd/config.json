@@ -4,5 +4,6 @@
     "jsonwebtoken": "u@pcrg9sMpD!sttb",
     "password_salt": "mp@i2.R@Y-GKpjr22dXkv2Q2",
     "google_password": "vxv*dpy4fjq7QXW4chq",
-    "encryption_key": "ojisdasjdsjabdjsojisdasjdsjabdjs"
+    "encryption_key": "ojisdasjdsjabdjsojisdasjdsjabdjs",
+    "recaptcha_secret": "6LeoFpcdAAAAAEm4vD0bO-buE3sibjv5vAWrNUw4"
 }
