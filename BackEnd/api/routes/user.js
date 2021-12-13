@@ -59,7 +59,7 @@ router.get('/', authRequired, (req, res) => {
 })
 
 router.get('/updatePassword/:_id', [
-    check('_id').notEmpty().isMongoId().customSanitizer(v => check('id').isMongoId() ? undefined : ObjectId(v) )
+    check('_id').notEmpty().customSanitizer(v => check('id').isMongoId() ? Promise.resolve(ObjectId(v)) : Promise.reject() )
 ], (req, res) => {
     const valid = validationResult(req)
     if (!valid.isEmpty()) res.sendStatus(400)
@@ -140,7 +140,7 @@ router.post('/create', authRequired, adminRequired, [
 })
 
 router.post('/read', authRequired, adminRequired, [
-    check('_id').optional().isMongoId().customSanitizer(v => check('id').isMongoId() ? undefined : ObjectId(v) ).withMessage("Invalid firstname"),
+    check('_id').optional().isMongoId().customSanitizer(v => check('id').isMongoId() ? Promise.resolve(ObjectId(v)) : Promise.reject() ).withMessage("Invalid ID Format"),
     check('first_name').optional().isAlpha().withMessage("Invalid firstname"),
     check('last_name').optional().isAlpha().withMessage("Invalid lastname"),
     check('username').optional().isString().withMessage("Invalid username"),
@@ -160,7 +160,7 @@ router.post('/read', authRequired, adminRequired, [
 })
 
 router.post('/update', authRequired, adminRequired, [
-    check('find._id').optional().isMongoId().customSanitizer(v => check('id').isMongoId() ? undefined : ObjectId(v) ).withMessage("Invalid ID Format In Find"),
+    check('find._id').optional().isMongoId().customSanitizer(v => check('id').isMongoId() ? Promise.resolve(ObjectId(v)) : Promise.reject() ).withMessage("Invalid ID Format In Find"),
     check('find.first_name').optional().isAlpha().withMessage("Invalid Firstname Format In Find"),
     check('find.last_name').optional().isAlpha().withMessage("Invalid Lastname Format In Find"),
     check('find.username').optional().isString().withMessage("Invalid Username Format In Find"),
@@ -186,7 +186,7 @@ router.post('/update', authRequired, adminRequired, [
 })
 
 router.post('/delete', authRequired, adminRequired, [
-    check('_id').optional().isMongoId().customSanitizer(v => check('id').isMongoId() ? undefined : ObjectId(v) ).withMessage("Invalid firstname"),
+    check('_id').optional().isMongoId().customSanitizer(v => check('id').isMongoId() ? Promise.resolve(ObjectId(v)) : Promise.reject() ).withMessage("Invalid firstname"),
     check('first_name').optional().isAlpha().withMessage("Invalid firstname"),
     check('last_name').optional().isAlpha().withMessage("Invalid lastname"),
     check('username').optional().isString().withMessage("Invalid username"),

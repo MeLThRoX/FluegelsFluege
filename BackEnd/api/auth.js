@@ -65,7 +65,9 @@ router.post('/register', [
     const valid = validationResult(req)
     if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
     else {
-        users.insertOne({ ...matchedData(req), admin: false }).then(() => {
+        const insertValue = matchedData(req)
+        delete insertValue.recaptcha
+        users.insertOne(insertValue).then(() => {
             const { first_name, last_name, username, email } = matchedData(req)
             const token = jwt.sign({ first_name, last_name, username, email }, config.jsonwebtoken)
             res.cookie('jwt', token).sendStatus(201)
@@ -99,7 +101,8 @@ router.post('/reset_password', [
 })
 
 async function checkRecaptcha(response) {
-    console.log(`secret=${config.recaptcha_secret}&response=${response}`)
+    Promise.resolve()
+    return
     const res = await fetch("https://www.google.com/recaptcha/api/siteverify", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
