@@ -28,7 +28,7 @@ router.post('/create', authRequired, adminRequired, [
 })
 
 router.post('/read', authRequired, [
-    check('_id').optional().isMongoId().customSanitizer(v => check('id').isMongoId() ? Promise.resolve(ObjectId(v)) : Promise.reject() ).withMessage('Invalid ID Format'),
+    check('_id').optional().isMongoId().customSanitizer(v => check('_id').isMongoId() ? Promise.resolve(ObjectId(v)) : Promise.reject() ).withMessage('Invalid ID Format'),
     check('orig').optional().isString().withMessage('Invalid origin'),
     check('dest').optional().isString().withMessage('Invalid Destination'),
     check('time').optional().isISO8601().toDate().withMessage('Invalid time'),
@@ -46,7 +46,7 @@ router.post('/read', authRequired, [
 })
 
 router.post('/update', authRequired, adminRequired, [
-    check('find._id').optional().isMongoId().customSanitizer(v => check('id').isMongoId() ? Promise.resolve(ObjectId(v)) : Promise.reject() ).withMessage('Invalid ID Format In Find'),
+    check('find._id').optional().isMongoId().customSanitizer(v => check('find._id').isMongoId() ? Promise.resolve(ObjectId(v)) : Promise.reject() ).withMessage('Invalid ID Format In Find'),
     check('find.orig').optional().isString().withMessage('Invalid Origin Format In Find'),
     check('find.dest').optional().isString().withMessage('Invalid Destination Format In Find'),
     check('find.time').optional().isISO8601().toDate().withMessage('Invalid Time Format In Find'),
@@ -69,7 +69,7 @@ router.post('/update', authRequired, adminRequired, [
 })
 
 router.post('/delete', authRequired, adminRequired, [
-    check('_id').optional().isMongoId().customSanitizer(v => check('id').isMongoId() ? Promise.resolve(ObjectId(v)) : Promise.reject() ).withMessage('Invalid ID Format'),
+    check('_id').optional().isMongoId().customSanitizer(v => check('_id').isMongoId() ? Promise.resolve(ObjectId(v)) : Promise.reject() ).withMessage('Invalid ID Format'),
     check('orig').optional().isString().withMessage('Invalid Origin Format'),
     check('dest').optional().isString().withMessage('Invalid Destination Format'),
     check('time').optional().isISO8601().toDate().withMessage('Invalid Time Format'),
@@ -103,7 +103,7 @@ router.post('/search', authRequired, authRequired, [
 })
 
 router.post('/book', authRequired, [
-    check('flight_id').optional().isMongoId().customSanitizer(v => check('id').isMongoId() ? Promise.resolve(ObjectId(v)) : Promise.reject() ).withMessage('Invalid Flight-ID Format'),
+    check('flight_id').optional().isMongoId().customSanitizer(v => check('flight_id').isMongoId() ? Promise.resolve(ObjectId(v)) : Promise.reject() ).withMessage('Invalid Flight-ID Format'),
     check('passengers.*.first_name').notEmpty().isAlpha().withMessage('Invalid Firstname Format'),
     check('passengers.*.last_name').notEmpty().isAlpha().withMessage('Invalid Lastname Format'),
     check('passengers.*.birthdate').notEmpty().isISO8601().toDate().withMessage('Invalid Birthdate Format'),
@@ -133,7 +133,7 @@ router.post('/book', authRequired, [
 })
 
 router.post('/passengers', authRequired, adminRequired, [
-    check('flight_id').optional().isMongoId().customSanitizer(v => check('id').isMongoId() ? Promise.resolve(ObjectId(v)) : Promise.reject() ).withMessage('Invalid Flight-ID Format'),
+    check('flight_id').optional().isMongoId().customSanitizer(v => check('flight_id').isMongoId() ? Promise.resolve(ObjectId(v)) : Promise.reject() ).withMessage('Invalid Flight-ID Format'),
 ], (req, res) => {
     const valid = validationResult(req)
     if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
