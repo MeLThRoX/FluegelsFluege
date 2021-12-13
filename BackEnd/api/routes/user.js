@@ -88,32 +88,9 @@ router.patch('/', authRequired, [
     const valid = validationResult(req)
     if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
     else {
-        updateData = matchedData(req)
-        promises = []
-
-        promises.push(new Promise((resolve, reject) => {
-            if (matchedData(req).password) {
-                passwordVerifications.insertOne({ password: matchedData(req).password, email: req.user.email }, (err, result) => {
-                    if (err) reject("Failed sending Mail")
-                    else {
-                        mail.sendMail(req.user.email, 'Password Verification', `http://${config.host}/api/user/updatePassword/${result.insertedId.toString()}`)
-                        resolve("Apply new password by clicking the verification-link sent to your E-Mail.")
-                    }
-                })
-            }
-        }))
-
-        promises.push(new Promise((resolve, reject) => {
-            users.findOneAndUpdate({ email: req.user.email }, { $set: updateData }, (err) => {
-                if (err) reject("Updating information failed")
-                else resolve("User information updated.")
-            })
-        }))
-
-        Promise.all(promises).then(values => {
-            res.send(values)
-        }).catch((reason) => {
-            res.status(400).send(reason)
+        users.findOneAndUpdate({ email: req.user.email }, { $set: matchedData(req) }, (err) => {
+            if (err) res.status(400).send("Error Updating Password")
+            else res.send("Update Successful")
         })
     }
 })
