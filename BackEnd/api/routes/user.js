@@ -17,7 +17,8 @@ database.listCollections({ name: 'users' }).next((err, collinfo) => {
         users.createIndexes([
             { name: 'Username already taken', key: { 'username': 1 }, unique: true },
             { name: 'Email already taken', key: { 'email': 1 }, unique: true },
-            { name: 'Phone number already taken', key: { 'phone': 1 }, unique: true }
+            { name: 'Phone number already taken', key: { 'phone': 1 }, unique: true },
+            { name: 'Expire User', key: { 'expireAt': 1 }, expireAfterSeconds: 0 }
         ])
     }
 })
@@ -26,6 +27,9 @@ users.find({ username: 'admin', admin: true }).toArray((err, adminUsers) => {
     if (err) console.log('Unable to fetch admin users.')
     else {
         if (!adminUsers.length) {
+            let expireDate = new Date()
+            expireDate.setHours(expireDate.getHours() + 24)
+
             users.insertOne({
                 first_name: 'admin',
                 last_name: 'admin',
@@ -34,7 +38,8 @@ users.find({ username: 'admin', admin: true }).toArray((err, adminUsers) => {
                 phone: '0',
                 credit_card: '0',
                 password: createPasswordHash(process.env.ADMIN_PASSWORD || 'admin'),
-                admin: true
+                admin: true,
+                expireAt: expireDate
             }).then(() => {
                 console.log('No admin user found! Created new admin user.')
             }).catch(() => {
