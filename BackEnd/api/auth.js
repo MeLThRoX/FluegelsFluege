@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const express = require('express');
 const { check, validationResult, matchedData } = require('express-validator');
 const fetch = require("node-fetch")
-const log = require('./log')
+const { log } = require('./routes/log')
 const database = require('./mongo')
 const mail = require('./mail');
 
