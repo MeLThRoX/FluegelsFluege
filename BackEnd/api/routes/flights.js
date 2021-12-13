@@ -12,14 +12,14 @@ router.post('/create', authRequired, adminRequired, [
     check('orig').notEmpty().isString().withMessage('Invalid Origin Format'),
     check('dest').notEmpty().isString().withMessage('Invalid Destination Format'),
     check('time').notEmpty().isISO8601().toDate().withMessage('Invalid Time Format'),
-    check('seats').notEmpty().isInt().withMessage('Invalid Set Number Format'),
+    check('seats').notEmpty().isInt().toInt().withMessage('Invalid Set Number Format'),
     check('price').notEmpty().isFloat().withMessage('Invalid Price Format')
 ], (req, res) => {
     const valid = validationResult(req)
     if (!valid.isEmpty()) {
         res.status(400).send(valid.errors[0].msg)
     } else {
-        flights.insertOne({ ...matchedData(req) }).then(() => {
+        flights.insertOne({ ...matchedData(req), remainingSeats: matchedData(req).seats }).then(() => {
             res.sendStatus(201)
         }).catch(() => {
             res.sendStatus(500)
@@ -116,11 +116,16 @@ router.post('/book', authRequired, [
     if (!valid.isEmpty()) res.status(400).send(valid.errors[0].msg)
     else {
         flights.findOne({ _id: matchedData(req).flight_id }).then(flight => {
-            users.findOneAndUpdate({ ...req.user, iat: undefined }, {
-                $push: { tickets: { $each: matchedData(req).passengers.map(passanger => ({ ...passanger, flight_id: matchedData(req).flight_id })) } }
-            }).then(user => {
-                res.sendStatus(200)
-            })
+            if (flight.remainingSeats >= matchedData(req).passengers.length) {
+                users.findOneAndUpdate({ ...req.user, iat: undefined }, {
+                    $push: { tickets: { $each: matchedData(req).passengers.map(passanger => ({ ...passanger, flight_id: matchedData(req).flight_id })) } }
+                }).then(user => {
+                    flights.updateOne({ _id: matchedData(req).flight_id }, { '$inc': { 'remainingSeats': -matchedData(req).passengers.length } })
+                    res.sendStatus(200)
+                })
+            } else {
+                res.status(400).send('No Remaining Seats')
+            }
         }).catch(err => {
             res.sendStatus(500)
         })
