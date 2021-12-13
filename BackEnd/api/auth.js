@@ -6,6 +6,7 @@ const fetch = require("node-fetch")
 const { log } = require('./routes/log')
 const database = require('./mongo')
 const mail = require('./mail');
+const {ObjectId} = require('mongodb')
 
 const router = express.Router();
 const users = database.collection("users")
@@ -101,8 +102,6 @@ router.post('/reset_password', [
 })
 
 async function checkRecaptcha(response) {
-    Promise.resolve()
-    return
     const res = await fetch("https://www.google.com/recaptcha/api/siteverify", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -154,6 +153,12 @@ function decode(string) {
     return decrypted;
 }
 
+function convertToMongoId(id) {
+    var checkForHexRegExp = new RegExp("^[0-9a-fA-F]{24}$")
+    if (checkForHexRegExp.test(id)) return Promise.resolve(ObjectId(id))
+    else Promise.reject("Invalid ID Format")
+}
+
 function authRequired(req, res, next) {
     const token = req.cookies.jwt
 
@@ -184,4 +189,4 @@ function adminRequired(req, res, next) {
     })
 }
 
-module.exports = { router, authRequired, adminRequired, createPasswordHash, checkPassword, encode, decode }
+module.exports = { router, authRequired, adminRequired, createPasswordHash, checkPassword, convertToMongoId, encode, decode }

@@ -1,7 +1,7 @@
 const { ObjectId } = require('bson');
 const express = require('express');
 const { check, validationResult, matchedData } = require('express-validator');
-const { authRequired, adminRequired, createPasswordHash, checkPassword, encode, decode } = require('../auth')
+const { authRequired, adminRequired, createPasswordHash, checkPassword, convertToMongoId, encode, decode } = require('../auth')
 const database = require('../mongo')
 const mail = require('../mail')
 
@@ -64,7 +64,7 @@ router.get('/', authRequired, (req, res) => {
 })
 
 router.get('/updatePassword/:_id', [
-    check('_id').notEmpty().customSanitizer(v => check('_id').isMongoId() ? Promise.resolve(ObjectId(v)) : Promise.reject() )
+    check('_id').notEmpty().customSanitizer(convertToMongoId)
 ], (req, res) => {
     const valid = validationResult(req)
     if (!valid.isEmpty()) res.sendStatus(400)
@@ -122,7 +122,7 @@ router.post('/create', authRequired, adminRequired, [
 })
 
 router.post('/read', authRequired, adminRequired, [
-    check('_id').optional().isMongoId().customSanitizer(v => check('_id').isMongoId() ? Promise.resolve(ObjectId(v)) : Promise.reject() ).withMessage("Invalid ID Format"),
+    check('_id').optional().isMongoId().customSanitizer(convertToMongoId),
     check('first_name').optional().isAlpha().withMessage("Invalid firstname"),
     check('last_name').optional().isAlpha().withMessage("Invalid lastname"),
     check('username').optional().isString().withMessage("Invalid username"),
@@ -142,7 +142,7 @@ router.post('/read', authRequired, adminRequired, [
 })
 
 router.post('/update', authRequired, adminRequired, [
-    check('find._id').optional().isMongoId().customSanitizer(v => check('find._id').isMongoId() ? Promise.resolve(ObjectId(v)) : Promise.reject() ).withMessage("Invalid ID Format In Find"),
+    check('find._id').optional().isMongoId().customSanitizer(convertToMongoId).withMessage("Invalid ID Format In Find"),
     check('find.first_name').optional().isAlpha().withMessage("Invalid Firstname Format In Find"),
     check('find.last_name').optional().isAlpha().withMessage("Invalid Lastname Format In Find"),
     check('find.username').optional().isString().withMessage("Invalid Username Format In Find"),
@@ -168,7 +168,7 @@ router.post('/update', authRequired, adminRequired, [
 })
 
 router.post('/delete', authRequired, adminRequired, [
-    check('_id').optional().isMongoId().customSanitizer(v => check('_id').isMongoId() ? Promise.resolve(ObjectId(v)) : Promise.reject() ).withMessage("Invalid firstname"),
+    check('_id').optional().isMongoId().customSanitizer(convertToMongoId).withMessage("Invalid firstname"),
     check('first_name').optional().isAlpha().withMessage("Invalid firstname"),
     check('last_name').optional().isAlpha().withMessage("Invalid lastname"),
     check('username').optional().isString().withMessage("Invalid username"),
