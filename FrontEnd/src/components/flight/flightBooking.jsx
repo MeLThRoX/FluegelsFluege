@@ -192,7 +192,8 @@ class BookingOverview extends Component {
     render() { 
         return(
     
-        <div className="wrapper">        
+        <div className="wrapper">   
+             
             {this.passengerInput(this.props.passengerCount)}
 
             <br/>

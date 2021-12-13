@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 
 import BasicScreen from './components/defaultScreens/startScreen';
 import LoginScreen from './components/defaultScreens/login';
@@ -85,11 +85,11 @@ class App extends React.Component {
     
     //clear the jwt token, when the browser window is closed
     window.onbeforeunload = () => {
-      
-      document.cookie = "jwt="
+      //Possibility to clear token on reload or close
+      //document.cookie = "jwt="
 
     };
-    
+
     return( 
       <>
       

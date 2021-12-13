@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function BasicTableNoSelectPassangers(props) {
 
-    const data = props.data;
+    let data = props.data;
 
     return (
         <table className="table table-hover table-bordered">
@@ -14,7 +14,8 @@ export default function BasicTableNoSelectPassangers(props) {
                 </tr>
             </thead>
             <tbody id="cursorPointer">
-                {data.map(function(item, key) {
+                
+                { !data ? "none found" : data.map(function(item, key) {
                     return (
                         <tr key = {key}>
                             <td><center>{item.flight_id}</center></td>

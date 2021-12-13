@@ -30,7 +30,7 @@ class SettingsUser extends Component {
         this.handleChange = this.handleChange.bind(this);
     }
 
-/*
+    /*
     Primäre-Handle Funktion für User-Input. 
     Wird von Eingabefeldern direkt in State gespeichert.
     */
@@ -43,7 +43,6 @@ class SettingsUser extends Component {
         this.setState({...this.state, [e.target.name]: e.target.value})
     }
 
-    // TODO - gibt keine Flights zurück - wollen wir das so lassen?
     /*
     Daten des zur Zeit eingeloggten Users werden von Backend abgefragt, um diese dann in Input-Feld dazustellen.
     Response Daten werden in state gespeichert und von da aus dargestellt

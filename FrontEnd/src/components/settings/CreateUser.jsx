@@ -57,10 +57,14 @@ class CreateUser extends Component {
                 
                 if( data === "Created"){
                     alert("Benutzer wurde erstellt")
-                    this.props.setPage("",startScreen)
+
                 } else {
                     alert("Error: " + resp.status + ". " + data)
+
                 }
+
+                this.props.setPage("", startScreen)
+                
             } else {
                 alert("Ihre Passwörter stimmen nicht überein!")
             }
@@ -90,6 +94,7 @@ class CreateUser extends Component {
         return ( 
         <div className="wrapper">
             <h1>Neuen Benutzer erstellen</h1>
+            Anforderungen an das neue Passwort: mindestens 8 Zeichen lang, ein Groß/Kleinbuchstabe
             <form>
                 <div>
                     <input
@@ -177,10 +182,10 @@ class CreateUser extends Component {
                 ref={e => this.captcha = e}
                 sitekey="6LeoFpcdAAAAAEOiHWSsJmnOxx5i-nKfo8SXccG3"
                 size="invisible"
-                verifyCallback={() => this.captcha.execute()}
+                verifyCallback={this.startRegistration}
             />
 
-            <button onClick={this.startRegistration}>Registrieren</button>
+            <button onClick={() => this.captcha.execute()}>Registrieren</button>
         </div> 
         );
             
