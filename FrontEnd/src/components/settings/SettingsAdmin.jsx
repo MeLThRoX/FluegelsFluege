@@ -34,17 +34,20 @@ class SettingsAdmin extends Component {
             flightData: [],
             overviewFlights: [],
 
-            foundUserID: "",
+            newPassword: "",
+            newPasswordCheck:""
+
         }
 
-         this.handleChange = this.handleChange.bind(this);
-         this.createNewFlight = this.createNewFlight.bind(this);
-         this.updateFlight = this.updateFlight.bind(this);
-         this.deleteFlight = this.deleteFlight.bind(this);
-         this.createOverviewUser = this.createOverviewUser.bind(this);
-         this.getIdByName = this.getIdByName.bind(this);
-         this.createOverviewFlight = this.createOverviewFlight.bind(this);
-
+        this.handleChange = this.handleChange.bind(this);
+        this.createNewFlight = this.createNewFlight.bind(this);
+        this.updateFlight = this.updateFlight.bind(this);
+        this.deleteFlight = this.deleteFlight.bind(this);
+        this.createOverviewUser = this.createOverviewUser.bind(this);
+        this.getIdByName = this.getIdByName.bind(this);
+        this.createOverviewFlight = this.createOverviewFlight.bind(this);
+        this.handleNewFlightDate = this.handleNewFlightDate.bind(this);
+        this.setNewPassword = this.setNewPassword.bind(this);
     }
 
     /*
@@ -88,6 +91,10 @@ class SettingsAdmin extends Component {
     handleChangeStartDate(date) {
         this.setState({inputEditTime: date})
       }
+
+    handleNewFlightDate(date) {
+        this.setState({inputCreateTime: date})
+    }
     
 
     /*
@@ -188,9 +195,9 @@ class SettingsAdmin extends Component {
     */
     async createOverviewUser() {
     
-        const toSearch = {
-            "_id": this.state.inputSearchFlightUID
-        }
+        let toSearch = {}
+
+        if (this.state.inputSearchFlightUID !== "") toSearch["_id"] = this.state.inputSearchFlightUID;
 
         const response = await fetch('/api/user/read', {
         method: 'POST',
@@ -200,9 +207,12 @@ class SettingsAdmin extends Component {
     
         if (response.status === 200) {
             const data = await response.json()
-            if (Object.keys(data).length > 9) {
+            alert(JSON.stringify(data))
+
+            if(Object.keys(data[0]).length === 10){
                 this.setState({flightData: data[0].tickets})
             }
+            
         } else {
             const data = await response.text()
             alert("Error: " + response.status + ". " + data)
@@ -211,50 +221,89 @@ class SettingsAdmin extends Component {
     }
 
     async createOverviewFlight() {
-        
-        
-        if (this.state.inputSearchFlightID !== "") {
 
-            const toSearch = {
-                "_id": this.state.inputSearchFlightID
-            }    
+        let toSearch = {}    
 
-            const response = await fetch('/api/flights/read', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
-            body: JSON.stringify(toSearch)
-            })
-        
-            const data = await response.json()
-            
-            if (response.status === 200) {
-                this.setState({overviewFlights: data})
-            } else {
-                alert("Error: " + response.status + ". " + JSON.stringify(data))
-            }
-            
+        if (this.state.inputSearchFlightID !== "") toSearch["_id"] = this.state.inputSearchFlightID;
 
-        } else {
-
-            const response = await fetch('/api/flights/read', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
-            body: JSON.stringify({})
-            })
-        
-            const data = await response.json()
+        const response = await fetch('/api/flights/read', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
+        body: JSON.stringify(toSearch)
+        })
     
-            if (response.status === 200) {
-                this.setState({overviewFlights: data})
-            } else {
-                alert("Error: " + response.status + ". " + JSON.stringify(data))
+        if (response.status === 200) {
+            const data = await response.json()
+            this.setState({overviewFlights: data})
+        } else {
+            const data = await response.text()
+            alert("Error: " + response.status + ". " + data)
+        }
+    }
+
+    async setNewPassword() {
+
+        if (this.state.newPassword === this.state.newPasswordCheck){
+
+            if (this.state.newPassword !== "") {
+
+                let toSubmit = {
+                    "password": this.state.newPassword
+                }
+
+                const response = await fetch('/api/user', {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
+                body: JSON.stringify(toSubmit)
+                })
+
+                if (response.status === 200) {
+                    alert("Passwort geändert")
+                } else {
+                    let data = await response.text();
+                    alert("Error: " + response.status + ". " + data)
+                }
             }
+        } else {
+            alert("Ihre eingegebenen Passwörter stimmen nicht überein!")
         }
     }
 
     render() { 
         return ( 
         <div>
+            <div style={{border: "3px solid green", textAlign: 'center'}} >
+
+                <a href="/api/logs/admin">Download Admin-Logs</a>
+                <br/>
+                <a href="/api/logs/user">Download User-Logs</a>
+
+            </div>
+
+            <div style={{border: "3px solid green", textAlign: 'center'}} >
+                Passwort ändern (mindestens 8 Zeichen lang, ein Groß/Kleinbuchstabe)
+                <div>
+                    <input 
+                        style={{width: '60%'}} 
+                        type="password" 
+                        name='newPassword'
+                        placeholder="New password" 
+                        value={this.state.newPassword}
+                        onChange={this.handleChange}
+                    />
+                </div>  
+                <div>
+                    <input 
+                        style={{width: '60%'}} 
+                        type="password" 
+                        placeholder="newPassword" 
+                        name ='newPasswordCheck'
+                        value={this.state.newPasswordCheck}
+                        onChange={this.handleChange}
+                    />
+                </div> 
+                <button onClick={() => this.setNewPassword()}> Neues Passwort setzen </button>
+            </div>
             <div style={{border: "3px solid green", textAlign: 'center'}} >
                 Neuen Flug erstellen
                 <div>
@@ -277,16 +326,7 @@ class SettingsAdmin extends Component {
                         onChange={this.handleChange}
                     />
                 </div> 
-                <div>
-                    <input 
-                        style={{width: '60%'}} 
-                        type="text" 
-                        placeholder="Time" 
-                        name ='inputCreateTime'
-                        value={this.state.inputCreateTime}
-                        onChange={this.handleChange}
-                    />
-                </div> 
+
                 <div>
                     <input 
                         style={{width: '60%'}} 
@@ -307,6 +347,19 @@ class SettingsAdmin extends Component {
                         onChange={this.handleChange}
                     />
                 </div> 
+                <br/>
+                <DatePicker
+                    selected={this.state.inputCreateTime}
+                    onChange={(date) => this.handleNewFlightDate(date)}
+                    showTimeSelect
+                    timeFormat="hh:mm aa"
+                    timeIntervals={20}
+                    timeCaption="time"
+                    dateFormat="yyyy-M-dd hh:mm aa"
+                    placeholderText="New Time"
+                    minDate={new Date()}
+                /> 
+                <br/><br/>
                 <button onClick={() => this.createNewFlight()}> Neuen Flug erstellen </button>
             </div>
             <div style={{border: "3px solid green", textAlign:'center'}}>
@@ -355,6 +408,7 @@ class SettingsAdmin extends Component {
                         onChange={this.handleChange}
                     />
                 </div>
+                <br/>
                 <DatePicker
                     style={{width: '60%'}} 
                     selected={this.state.inputEditTime}
@@ -367,7 +421,7 @@ class SettingsAdmin extends Component {
                     placeholderText="New Time"
                     minDate={new Date()}
                 /> 
-                <br/>
+                <br/><br/>
                 <button onClick={() => this.updateFlight()}> Flug updaten </button>
             </div>
             <div style={{border: "3px solid green", textAlign:'center'}}>
@@ -466,6 +520,18 @@ export default SettingsAdmin;
                         placeholder="Time" 
                         name ='inputEditTime'
                         value={this.state.inputEditTime}
+                        onChange={this.handleChange}
+                    />
+                </div> 
+
+
+                                <div>
+                    <input 
+                        style={{width: '60%'}} 
+                        type="text" 
+                        placeholder="Time" 
+                        name ='inputCreateTime'
+                        value={this.state.inputCreateTime}
                         onChange={this.handleChange}
                     />
                 </div> 

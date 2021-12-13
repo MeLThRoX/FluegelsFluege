@@ -81,8 +81,6 @@ class FlightOverview extends Component {
       alert("Error: " + response.status + ". " + JSON.stringify(data))
 
     }
-
-  
   }
 
   /*
@@ -99,7 +97,6 @@ class FlightOverview extends Component {
     this.setState({...this.state, [name]: e.target.value})
   }
 
-  //ToDo
   /*
   Methode zum Aktualisieren der im Übergeben Land verfügbaren Flughäfen.
   Stellt request an API und speichert Response im state.
@@ -128,8 +125,6 @@ class FlightOverview extends Component {
       this.setState({port_start: data})
       this.setState({origin_port: data[0].iata})
     }
-    
-
   }
 
   /*
@@ -139,7 +134,7 @@ class FlightOverview extends Component {
     this.setState({time: date})
   }
 
-  //ToDo - request gibt keine antwort
+  
   /*
   Funktion zum Erhalten der verfügbaren Flüge nach Eingabe des Users.
   Sendet Eingabe-Daten aus state an API. Response wird in State (flights) gespeichert. flights ist Datengrundlage für die darstellende Tabelle

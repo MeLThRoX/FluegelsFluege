@@ -12,6 +12,7 @@ export default function BasicTableNoSelectUser(props) {
                     <th scope="col">Vorname</th>
                     <th scope="col">Nachname</th>
                     <th scope="col">Username</th>
+                    <th scope="col">Email</th>
                 </tr>
             </thead>
             <tbody id="cursorPointer">
@@ -22,6 +23,7 @@ export default function BasicTableNoSelectUser(props) {
                             <td>{item.first_name}</td>
                             <td>{item.last_name}</td>
                             <td>{item.username}</td>
+                            <td>{item.email}</td>
                         </tr>
                     )
                 })}

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Recaptcha from 'react-recaptcha';
+import startScreen from '../defaultScreens/startScreen';
 import '../../styles/Wrapper.css'
 
 class resetInterface extends Component {
@@ -42,12 +43,16 @@ class resetInterface extends Component {
         
             if (response.status === 200) {
                 alert("Bitte folgen Sie den Anweisungen in der Email, die Sie gleich erhalten werden.")
+                
             } else {
                 alert("Error Code: " + response.status + ". " + data)
             }
+        
+            this.props.setPage("", startScreen)            
 
         } else {
             alert("Ihre eingegeben Passwörter stimmen nicht überein")
+            this.props.setPage("", startScreen)
         }
     }
 
@@ -68,6 +73,7 @@ class resetInterface extends Component {
                     name ='email'
                     value={this.state.email}
                     onChange={this.handleChange}
+
                 />
             </div> 
             <div>

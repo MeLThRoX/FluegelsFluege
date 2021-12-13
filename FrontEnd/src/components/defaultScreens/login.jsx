@@ -13,7 +13,6 @@ class Login extends Component {
     this.state = { 
       username: "",
       password: "",
-      token: "",
       isVerified: false,
       isLoggedIn: false
      }
@@ -24,8 +23,8 @@ class Login extends Component {
      this.verifiyCaptcha = this.verifiyCaptcha.bind(this);
      this.handleChange = this.handleChange.bind(this);
      this.loadPasswordReset = this.loadPasswordReset.bind(this);
-     this.setToken = this.setToken.bind(this);
-     this.verifyCallback = this.verifyCallback.bind(this)
+
+
   }
 
   verifiyCaptcha() {
@@ -33,20 +32,13 @@ class Login extends Component {
   }
 
   loadPasswordReset(){
-
     this.props.setPage("", resetInterface)
-
   }
 
   handleChange(e) {
     this.setState({...this.state, [e.target.name]: e.target.value})
   }
 
-  setToken(new_token){
-    this.setState({token: new_token})
-  }
-
-  
   
   /*
   Funktion zum handlen des Login-Submit. Mit Login-Button verknüpft.
@@ -54,38 +46,6 @@ class Login extends Component {
   Eingabeüberprüfung auf Seiten des Backend
   */
   async handleSubmit(token) {
-    alert(token);
-
-    //Recaptcha.execute();
-    /*
-
-    const toSubmit = {
-      "username": this.state.username,
-      "password": this.state.password,
-      "recaptche": this.state.token
-    }
-
-    const response = await fetch('/api/login', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
-    body: JSON.stringify(toSubmit)
-    })
-
-    let data = await response.text();
-
-    if (response.status === 200) {
-      alert("Erfolgreich eingeloggt!")
-      this.props.setPage("", startScreen)
-    } else {
-
-      alert("Error: " + response.status + ". " + data )
-
-    }
-    */
-  }
-
-  async verifyCallback(token) {
-
     const toSubmit = {
       "username": this.state.username,
       "password": this.state.password,
@@ -101,14 +61,15 @@ class Login extends Component {
     let data = await response.text();
 
     if (response.status === 200) {
+      
       alert("Erfolgreich eingeloggt!")
-      this.props.setPage("", startScreen)
+
     } else {
 
       alert("Error: " + response.status + ". " + data )
 
     }
-
+    this.props.setPage("", startScreen)
   }
 
   render() { 
@@ -121,15 +82,15 @@ class Login extends Component {
             <input name="password" type="password" placeholder="Passwort" onChange={(e) => this.handleChange(e)}/>
           </div>
           <br/>
-          <button onClick={() => this.captcha.execute()}>Einloggen</button>
-          <button type="submit" onClick={this.loadPasswordReset}>Password vergessen</button>
+          <button style={{width:200}} onClick={() => this.captcha.execute()}>Einloggen</button>
+          <button style={{width:200}} type="submit" onClick={this.loadPasswordReset}>Password vergessen</button>
           <br/>
 
           <Recaptcha
             ref={e => this.captcha = e}
             sitekey="6LeoFpcdAAAAAEOiHWSsJmnOxx5i-nKfo8SXccG3"
             size="invisible"
-            verifyCallback={this.verifyCallback}
+            verifyCallback={this.handleSubmit}
           />
 
       </div>
