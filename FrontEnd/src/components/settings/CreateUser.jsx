@@ -60,18 +60,16 @@ class CreateUser extends Component {
 
                 } else {
                     alert("Error: " + resp.status + ". " + data)
-
                 }
-
-                this.props.setPage("", startScreen)
-                
             } else {
                 alert("Ihre Passwörter stimmen nicht überein!")
             }
         } else {
             alert("Bitte AGB aktzeptieren!")
         }
- 
+        
+        this.props.setPage("", startScreen)
+
     }
 
     /*

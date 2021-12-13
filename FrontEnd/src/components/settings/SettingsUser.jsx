@@ -24,10 +24,11 @@ class SettingsUser extends Component {
             flightsOverview: []
         }
 
-        this.updateUserdata= this.updateUserdata.bind(this);
+        this.updateData= this.updateData.bind(this);
         this.getAndSetCurrentData = this.getAndSetCurrentData.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
         this.handleChange = this.handleChange.bind(this);
+
     }
 
     /*
@@ -65,9 +66,8 @@ class SettingsUser extends Component {
             this.setState({phone: data.phone})
             this.setState({credit_card: data.credit_card})
             
-            if (Object.keys(data).length > 7) {
-                this.setState({booked_flights: data.tickets})
-            }
+            this.setState({booked_flights: [data]})
+            
         } else {
 
             alert("Error: " + response.status + ". " + JSON.stringify(data))
@@ -89,40 +89,37 @@ class SettingsUser extends Component {
     Falls keine Änderungen vom User getroffen wurde, werden seine aktuellen Daten übermittelt.
     Damit der Request an die API geschickt wird, müssen die eingegebenen Passwörtet übereinstimmen.
     */
-    async updateUserdata() {
+    async updateData() {
 
-        if (this.state.password === this.state.password_check) {
-            const toSubmit = {
+        if (this.state.password_check === this.state.password){
+            let toSubmit = {
                 "first_name": this.state.first_name,
                 "last_name": this.state.last_name,
                 "username": this.state.username,
                 "email": this.state.email,
                 "phone": this.state.phone
-                }
+            }
 
             if (this.state.numberChanged) toSubmit["credit_card"] = this.state.credit_card;
             if (this.state.password !== "") toSubmit["password"] = this.state.password;
-
-            alert(JSON.stringify(toSubmit))
-
+    
             const response = await fetch('/api/user', {
-                method: 'PATCH',
-                headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
-                boby: JSON.stringify(toSubmit)
+            method: 'PATCH',
+            headers: {'Content-Type': 'application/json', 'charset':'utf-8'},
+            body: JSON.stringify(toSubmit)
             })
-
-            const data = await response.text();
-
-            if (data === "OK") {
-                alert("Daten erfolgreich geändert!")
-            }else{
+    
+            if (response.status === 200) {
+                alert("Daten geändert")
+            } else {
+                let data = await response.text();
                 alert("Error: " + response.status + ". " + data)
             }
-
         } else {
-            alert("Ihre eingegebenen Passwörter stimmen nicht überein!")
+            alert("Ihre Eingegebenen Passwörter stimmen nicht überein")
         }
     }
+
 
     async createOverviewFlight() {
 
@@ -138,12 +135,12 @@ class SettingsUser extends Component {
             body: JSON.stringify(toSearch)
             })
         
-            const data = await response.json()
-
             if ( response.status === 200) {
+                const data = await response.json()
                 this.setState({flightsOverview: data})
             } else {
-                alert("Error: " + response.status + ". " + JSON.stringify(data))
+                const data = await response.text()
+                alert("Error: " + response.status + ". " + data)
             }
             
         } else {
@@ -227,7 +224,7 @@ class SettingsUser extends Component {
                     placeholder="Kreditkartennummer"  
                 />        
             </div>  
-            <button onClick={() => this.updateUserdata()}>Daten updaten</button>     
+            <button onClick={() => this.updateData()}>Daten updaten</button>     
             
             <div style={{margin: 15}}>
                 Übersicht zu gebuchten Flügen:
