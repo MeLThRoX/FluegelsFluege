@@ -25,7 +25,7 @@ export default function BasicTableShowFlights(props) {
                             <td>{item.dest}</td>
                             <td>{item.time}</td>
                             <td>{item.seats}</td>
-                            <td>{""}</td>
+                            <td>{item.remainingSeats}</td>
                         </tr>
                     )
                 })}

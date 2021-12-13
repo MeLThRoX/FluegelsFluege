@@ -155,12 +155,12 @@ class FlightOverview extends Component {
       body: JSON.stringify(selectedData)
     })
 
-    const data = await response.json()
-
     if (response.status === 200) {
+      const data = await response.json()
       this.setState({flights: data})
     } else {
-      alert("Error: " + response.status + ". " + JSON.stringify(data))
+      const data = await response.text()
+      alert("Error: " + response.status + ". " + data)
     }
   }
 

@@ -207,11 +207,8 @@ class SettingsAdmin extends Component {
     
         if (response.status === 200) {
             const data = await response.json()
-            alert(JSON.stringify(data))
 
-            if(Object.keys(data[0]).length === 10){
-                this.setState({flightData: data[0].tickets})
-            }
+            this.setState({flightData: data})
             
         } else {
             const data = await response.text()
